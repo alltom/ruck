@@ -4,95 +4,28 @@ module Ruck
   CHANNELS = 1
   SAMPLE_RATE = 44100
   BITS_PER_SAMPLE = 16
-
-  module Target
-    def <<(ugen)
-      @ins << ugen
-    end
-  
-    def >>(ugen)
-      @ins.delete(ugen)
-    end
-  end
-
-  module Source
-    def next; 0; end
-    def last; 0; end
-  end
-
-  module Oscillator
-    def self.included(base)
-      base.instance_eval do
-        attr_accessor :freq
-        attr_accessor :phase
-      end
-    end
-  end
-
-  class Gain
-    include Source
-    include Target
-    
-    def initialize(gain = 1.0)
-      @gain = gain
-      @ins = []
-    end
-  
-    def next
-      @ins.inject(0) { |samp, ugen| samp += ugen.next } * @gain
-    end
-    
-    def to_s
-      "<Gain: gain:#{@gain}>"
-    end
-  end
-
-  class SinOsc
-    include Source
-    include Oscillator
-  
-    attr_accessor :gain
-  
-    def initialize(freq = 440.0, gain = 1.0)
-      @freq = freq
-      @gain = gain
-      @phase = 0.0
-    end
-  
-    def next
-      samp = @gain * Math.sin(@phase * 2 * Math::PI)
-      @phase += @freq.to_f / SAMPLE_RATE.to_f
-      samp
-    end
-    
-    def to_s
-      "<SinOsc: freq:#{@freq} gain:#{@gain}>"
-    end
-  end
   
   class Shred
     attr_accessor :now
+    attr_accessor :finished
     
     def initialize(shreduler, now, name, &block)
       @shreduler = shreduler
       @now = now
       @name = name
       @block = block
-      @paused = true
+      @finished = false
     end
     
-    # returns true when completed
     def go(resume)
       @resume = resume
       @block.call(self)
-      @paused = false # finished
-    end
-    
-    def finished
-      @paused == false
+      @finished = true
     end
     
     def yield(samples)
+      samples = samples.to_i
+      samples = 0 if samples < 0
       puts "#{self} yielding #{samples} samples"
       @now += samples
       callcc do |cont|
@@ -176,4 +109,13 @@ class Fixnum
   alias_method :seconds, :second
 end
 
-require "wav"
+class Float
+  def second
+    self * Ruck::SAMPLE_RATE
+  end
+  alias_method :seconds, :second
+end
+
+require "ugen/general"
+require "ugen/wav"
+require "ugen/osc"

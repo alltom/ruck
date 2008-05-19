@@ -1,11 +1,6 @@
 require "ruck"
 include Ruck
-
-def beep(shred, wav)
-  wav << (s = SinOsc.new(440, 0.3))
-  shred.yield 1.second
-  wav >> s
-end
+include UGen
 
 spork("main") do |shred|
 
@@ -17,15 +12,21 @@ spork("main") do |shred|
 
   shred.yield 1.second
 
-  spork("beep") do |x|
-    wav << (s = SinOsc.new(440, 0.3))
-    x.yield 1.second
-    wav >> s
-  end
+  spork("beep") { |shred| beep(shred, wav) }
 
   shred.yield 2.seconds
   
   wav.save
+end
+
+def beep(shred, wav)
+  puts "beep is in #{shred}"
+  wav << (s = SinOsc.new(440, 0.3))
+  10.times do
+    shred.yield 0.1.seconds
+    s.freq *= 1.2
+  end
+  wav >> s
 end
 
 run
