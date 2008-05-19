@@ -1,4 +1,4 @@
-require "ruck"
+require "../ruck"
 include Ruck
 include UGen
 
