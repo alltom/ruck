@@ -116,6 +116,6 @@ class Float
   alias_method :seconds, :second
 end
 
-require "ugen/general"
-require "ugen/wav"
-require "ugen/osc"
+require File.join(File.dirname(__FILE__), "ugen", "general")
+require File.join(File.dirname(__FILE__), "ugen", "wav")
+require File.join(File.dirname(__FILE__), "ugen", "osc")

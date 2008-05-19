@@ -21,7 +21,7 @@ end
 
 def beep(shred, wav)
   puts "beep is in #{shred}"
-  wav << (s = SinOsc.new(440, 0.3))
+  wav << (s = SawOsc.new(440, 0.3))
   10.times do
     shred.yield 0.1.seconds
     s.freq *= 1.2
