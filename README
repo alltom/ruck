@@ -9,6 +9,13 @@ Work in Progress:
 
 But there's WAV output! (woot)
 
+Small TODO:
+- Make Linkages more efficient (they're so slow)
+- Add Events
+
+Big TODO:
+- Live audio
+
 Comparison
 ==========
 
