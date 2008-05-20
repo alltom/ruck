@@ -1,0 +1,41 @@
+A port of ChucK to Ruby!
+Do things you'd do in ChucK in Ruby!
+A very, very minor subset of such things
+
+Work in Progress:
+- No live speaker output
+- Very, very few UGens, and no UAnas
+- Probably not stable (but the examples work!)
+
+But there's WAV output! (woot)
+
+Comparison
+==========
+
+  ChucK:
+
+    SinOsc s => dac;
+    5::second => now;
+    
+    // then listen to your speakers
+
+  Ruck:
+
+    require "ruck"
+    include Ruck
+    include UGen
+  
+    spork do
+  
+      wav = WavOut.new("out.wav")
+      wav << SinOsc.new(440)
+      blackhole << wav
+
+      play 5.seconds
+
+    end
+    
+    // then listen to out.wav when it's done
+
+... so there's obviously a lot of work to do ...
+        ... isn't programming fun?!
