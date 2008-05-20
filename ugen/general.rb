@@ -5,10 +5,12 @@ module Ruck
     module Target
       def <<(ugen)
         @ins << ugen
+        ugen
       end
   
       def >>(ugen)
         @ins.delete(ugen)
+        ugen
       end
     end
 
