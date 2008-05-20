@@ -13,14 +13,15 @@ module Ruck
         @filename = filename
         @samples = []
         @ins = []
+        @last = 0.0
         
         at_exit { self.save }
       end
   
       def next
-        n = @ins.inject(0) { |samp, ugen| samp += ugen.next }
-        @samples << n
-        n
+        @last = @ins.inject(0) { |samp, ugen| samp += ugen.next }
+        @samples << @last
+        @last
       end
   
       def save

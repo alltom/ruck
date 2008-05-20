@@ -23,25 +23,28 @@ module Ruck
         ugen.remove_source self
       end
       
-      def next; 0; end
-      def last; 0; end
+      def next; @last; end
+      def last; @last; end
     end
   
     class Gain
       include Source
       include Target
+      
+      linkable_attr :gain
     
       def initialize(gain = 1.0)
         @gain = gain
         @ins = []
+        @last = 0.0
       end
   
       def next
-        @ins.inject(0) { |samp, ugen| samp += ugen.next } * @gain
+        @last = @ins.inject(0) { |samp, ugen| samp += ugen.next } * gain
       end
     
       def to_s
-        "<Gain: gain:#{@gain}>"
+        "<Gain: gain:#{gain}>"
       end
     end
   

@@ -129,6 +129,7 @@ class Float
   alias_method :seconds, :second
 end
 
+require File.join(File.dirname(__FILE__), "linkage")
 require File.join(File.dirname(__FILE__), "ugen", "general")
 require File.join(File.dirname(__FILE__), "ugen", "wav")
 require File.join(File.dirname(__FILE__), "ugen", "osc")
