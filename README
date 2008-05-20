@@ -28,8 +28,7 @@ Comparison
     spork do
   
       wav = WavOut.new("out.wav")
-      wav << SinOsc.new(440)
-      blackhole << wav
+      SinOsc.new(440) >> wav >> blackhole
 
       play 5.seconds
 

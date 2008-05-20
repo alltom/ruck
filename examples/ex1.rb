@@ -5,26 +5,26 @@ include UGen
 spork("main") do
 
   wav = WavOut.new("test.wav")
-  wav << SinOsc.new(440, 0.3)
-  wav << SinOsc.new(880, 0.3)
+  SinOsc.new(440, 0.3) >> wav
+  SinOsc.new(880, 0.3) >> wav
 
-  blackhole << wav
+  wav >> blackhole
 
   play 1.second
 
   spork("beep") { beep(wav) }
 
-  5.times { play 2.seconds }
+  3.times { play 1.seconds }
 
 end
 
 def beep(wav)
-  wav << (s = SawOsc.new(440, 0.3))
+  (s = SawOsc.new(440, 0.3)) >> wav
   10.times do
     play 0.1.seconds
     s.freq *= 1.2
   end
-  wav >> s
+  s << wav
 end
 
 run

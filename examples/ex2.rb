@@ -4,7 +4,7 @@ include UGen
 
 spork do
   
-  blackhole << WavOut.new("test.wav") << SinOsc.new(440)
+  SinOsc.new(440) >> WavOut.new("test.wav") >> blackhole
   play 5.seconds
 
 end

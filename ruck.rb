@@ -90,7 +90,7 @@ module Ruck
     return @@blackhole if defined? @@blackhole
     
     @@blackhole = Gain.new(0.0)
-    dac << @@blackhole
+    @@blackhole >> dac
     @@blackhole
   end
   

@@ -3,18 +3,26 @@ module Ruck
   module UGen
 
     module Target
-      def <<(ugen)
+      def add_source(ugen)
         @ins << ugen
-        ugen
+        self
       end
-  
-      def >>(ugen)
+      
+      def remove_source(ugen)
         @ins.delete(ugen)
-        ugen
+        self
       end
     end
 
     module Source
+      def >>(ugen)
+        ugen.add_source self
+      end
+      
+      def <<(ugen)
+        ugen.remove_source self
+      end
+      
       def next; 0; end
       def last; 0; end
     end
