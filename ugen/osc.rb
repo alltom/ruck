@@ -11,7 +11,7 @@ module Ruck
       end
       
       def phase_forward
-        return if Linkage.is_link? @phase
+        return if @phase.is_link?
         @phase = (@phase + freq.to_f / SAMPLE_RATE.to_f) % 1.0
       end
     end

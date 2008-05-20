@@ -87,7 +87,7 @@ module Ruck
       protected
       
         def inc_progress
-          return if Linkage.is_link? @progress
+          return if @progress.is_link?
           return if @paused
           @progress += 1.0 / duration
           @progress = 1.0 if @progress > 1.0

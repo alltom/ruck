@@ -17,11 +17,17 @@ module Ruck
       val
     end
     
-    def self.is_link?(val)
-      val.respond_to? :real_value
+    def is_link?
+      true
     end
   end
   
+end
+
+class Object
+  def is_link?
+    false
+  end
 end
 
 def Object.linkable_attr(attr)
