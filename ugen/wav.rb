@@ -13,6 +13,8 @@ module Ruck
         @filename = filename
         @samples = []
         @ins = []
+        
+        at_exit { self.save }
       end
   
       def next
@@ -22,6 +24,7 @@ module Ruck
       end
   
       def save
+        puts "Saving WAV to #{@filename}..."
         File.open(@filename, "wb") { |f| f.write encode }
       end
   

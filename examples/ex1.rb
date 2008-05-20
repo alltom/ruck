@@ -2,7 +2,7 @@ require "../ruck"
 include Ruck
 include UGen
 
-spork("main") do |shred|
+spork("main") do
 
   wav = WavOut.new("test.wav")
   wav << SinOsc.new(440, 0.3)
@@ -10,20 +10,18 @@ spork("main") do |shred|
 
   blackhole << wav
 
-  shred.yield 1.second
+  play 1.second
 
-  spork("beep") { |shred| beep(shred, wav) }
+  spork("beep") { beep(wav) }
 
-  shred.yield 2.seconds
-  
-  wav.save
+  5.times { play 2.seconds }
+
 end
 
-def beep(shred, wav)
-  puts "beep is in #{shred}"
+def beep(wav)
   wav << (s = SawOsc.new(440, 0.3))
   10.times do
-    shred.yield 0.1.seconds
+    play 0.1.seconds
     s.freq *= 1.2
   end
   wav >> s

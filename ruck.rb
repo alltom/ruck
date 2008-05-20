@@ -6,7 +6,7 @@ module Ruck
   BITS_PER_SAMPLE = 16
   
   class Shred
-    attr_accessor :now
+    attr_reader :now
     attr_accessor :finished
     
     def initialize(shreduler, now, name, &block)
@@ -19,19 +19,20 @@ module Ruck
     
     def go(resume)
       @resume = resume
-      @block.call(self)
+      @block.call
       @finished = true
     end
     
     def yield(samples)
       samples = samples.to_i
       samples = 0 if samples < 0
-      puts "#{self} yielding #{samples} samples"
+      puts "#{self} yielding #{samples} samples (now = #{now})"
       @now += samples
       callcc do |cont|
         @block = cont
         @resume.call # jump back to shreduler
       end
+      samples
     end
     
     def <=>(shred)
@@ -44,9 +45,13 @@ module Ruck
   end
   
   class Shreduler
+    attr_reader :running
+    attr_reader :current_shred
+    
     def initialize
       @shreds = []
       @now = 0
+      @running = false
     end
     
     def spork(name, &shred)
@@ -55,25 +60,29 @@ module Ruck
     end
     
     def sim
+      puts "min is #{@shreds.min} (shred.now = #{@shreds.min.now}) (now = #{@now})"
       min = @shreds.min.now
-      puts "catching up #{min - @now} samples"
-      (min - @now).times { Ruck.dac.next }
+      puts "catching up #{min - @now} samples (#{min} -> #{@now})"
+      (min - @now).times { dac.next }
       @now = min
     end
     
     def run
       puts "shreduler starting"
+      @running = true
       
       while @shreds.length > 0
         sim
-        shred = @shreds.min
-        puts "giving #{shred} a chance"
-        callcc { |cont| shred.go(cont) }
-        if shred.finished
-          puts "#{shred} finished"
-          @shreds.delete(shred)
+        @current_shred = @shreds.min
+        puts "giving #{@current_shred} a chance"
+        callcc { |cont| @current_shred.go(cont) }
+        if @current_shred.finished
+          puts "#{@current_shred} finished"
+          @shreds.delete(@current_shred)
         end
       end
+      
+      @running = false
     end
   end
   
@@ -90,14 +99,18 @@ module Ruck
   end
   
   def run
-    # check for re-entry
     @shreduler ||= Shreduler.new
+    $stderr.puts("Ruck already running") and return if @shreduler.running
     @shreduler.run
   end
   
   def spork(name = "unnamed", &shred)
     @shreduler ||= Shreduler.new
     @shreduler.spork(name, &shred)
+  end
+  
+  def play(samples)
+    @shreduler.current_shred.yield(samples)
   end
 
 end
