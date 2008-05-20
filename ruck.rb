@@ -26,7 +26,6 @@ module Ruck
     def yield(samples)
       samples = samples.to_i
       samples = 0 if samples < 0
-      puts "#{self} yielding #{samples} samples (now = #{now})"
       @now += samples
       callcc do |cont|
         @block = cont
@@ -60,9 +59,7 @@ module Ruck
     end
     
     def sim
-      puts "min is #{@shreds.min} (shred.now = #{@shreds.min.now}) (now = #{@now})"
       min = @shreds.min.now
-      puts "catching up #{min - @now} samples (#{min} -> #{@now})"
       (min - @now).times { dac.next }
       @now = min
     end
@@ -74,7 +71,6 @@ module Ruck
       while @shreds.length > 0
         sim
         @current_shred = @shreds.min
-        puts "giving #{@current_shred} a chance"
         callcc { |cont| @current_shred.go(cont) }
         if @current_shred.finished
           puts "#{@current_shred} finished"
