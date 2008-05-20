@@ -60,7 +60,11 @@ module Ruck
     
     def sim
       min = @shreds.min.now
-      (min - @now).times { dac.next }
+      (min - @now).times do
+        dac.next
+        @now += 1
+        puts "#{@now / SAMPLE_RATE} seconds rendered..." if @now % SAMPLE_RATE == 0
+      end
       @now = min
     end
     
