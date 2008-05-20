@@ -1,3 +1,17 @@
+# The goal of linkages is to have attributes which are
+# periodically re-evaluated. Basically, to turn this:
+# 
+#   loop { ugen.gain = abs(sin.last); play 1.sample }
+# 
+# into this:
+# 
+#   ugen.gain = Linkage.new(sin, :last)
+#   loop { play 10.seconds }
+# 
+# The way I do this now (check for Linkage in the
+# attribute read method) is really slow. Gotta be
+# a better way.
+
 module Ruck
   
   class Linkage
