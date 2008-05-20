@@ -44,7 +44,7 @@ module Ruck
       include Source
       include Oscillator
 
-      attr_accessor :gain
+      linkable_attr :gain
 
       def initialize(freq = 440.0, gain = 1.0)
         @freq = freq
@@ -53,7 +53,7 @@ module Ruck
       end
 
       def next
-        @last = if @phase < 0.5
+        @last = if phase < 0.5
           phase * 4.0 - 1.0
         else
           1.0 - ((phase - 0.5) * 4.0)

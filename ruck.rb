@@ -39,6 +39,10 @@ class Fixnum
     self * Ruck::SAMPLE_RATE
   end
   alias_method :seconds, :second
+  
+  def ms
+    self * Ruck::SAMPLE_RATE / 1000.0
+  end
 end
 
 class Float
@@ -46,6 +50,10 @@ class Float
     self * Ruck::SAMPLE_RATE
   end
   alias_method :seconds, :second
+  
+  def ms
+    self * Ruck::SAMPLE_RATE / 1000.0
+  end
 end
 
 require File.join(File.dirname(__FILE__), "linkage")
