@@ -1,6 +1,8 @@
 
 module Ruck
   module UGen
+    
+    TWO_PI = 2 * Math::PI
 
     module Oscillator
       def self.included(base)
@@ -30,7 +32,7 @@ module Ruck
       end
 
       def next
-        @last = gain * Math.sin(phase * 2 * Math::PI)
+        @last = gain * Math.sin(phase * TWO_PI)
         phase_forward
         @last
       end
