@@ -39,6 +39,10 @@ module Ruck
 end
 
 class Object
+  def real_value
+    self
+  end
+  
   def is_link?
     false
   end
@@ -48,7 +52,6 @@ def Object.linkable_attr(attr)
   attr_writer attr
   define_method(attr) do
     val = instance_variable_get("@#{attr}".to_sym)
-    return val.real_value if val.respond_to? :real_value
-    val
+    return val.real_value
   end
 end
