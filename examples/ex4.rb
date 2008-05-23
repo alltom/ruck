@@ -8,7 +8,7 @@ spork("main") do
   (s = SawOsc.new(440, 0.5)) >> wav
   (adsr = ADSR.new(50.ms, 50.ms, 0.5, 1.second)) >> blackhole
   
-  s.gain = Linkage.new(adsr, :last)
+  s.link_gain lambda { adsr.last }
   
   play 1.second
   adsr.on

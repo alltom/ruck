@@ -2,9 +2,9 @@
 module Ruck
   module UGen
     
-    TWO_PI = 2 * Math::PI
-
     module Oscillator
+      TWO_PI = 2 * Math::PI
+      
       def self.included(base)
         base.instance_eval do
           linkable_attr :freq
@@ -13,7 +13,6 @@ module Ruck
       end
       
       def phase_forward
-        return if @phase.is_link?
         @phase = (@phase + freq.to_f / SAMPLE_RATE.to_f) % 1.0
       end
     end
