@@ -1,10 +1,9 @@
-require "../ruck"
+require File.join(File.dirname(__FILE__), "..", "ruck")
 include Ruck
-include UGen
 
 spork("main") do
 
-  wav = WavOut.new("test.wav")
+  wav = WavOut.new("ex1.wav")
   SinOsc.new(440, 0.25) >> wav
   SinOsc.new(880, 0.25) >> wav
 

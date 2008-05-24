@@ -1,10 +1,9 @@
-require "../ruck"
+require File.join(File.dirname(__FILE__), "..", "ruck")
 include Ruck
-include UGen
 
 spork("main") do
 
-  (wav = WavOut.new("test.wav")) >> blackhole
+  (wav = WavOut.new("ex3.wav")) >> blackhole
   (s = SinOsc.new(440, 0.5)) >> wav
   (s2 = SinOsc.new(3)) >> blackhole
   
