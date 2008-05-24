@@ -69,24 +69,3 @@ module Riff
   end
   
 end
-
-include Riff
-riff = RiffReader.new("../examples/ex1.wav").chunks.first
-unless riff.type == "RIFF"
-  $stderr.puts "Not RIFF!"
-  exit
-end
-unless riff[0..3] == "WAVE"
-  $stderr.puts "Not WAVE!"
-  exit
-end
-riff.data_skip = 4 # skip "WAVE"
-fmt, data = riff.chunks
-unless fmt[0..1].unpack("s1").first == 1
-  $stderr.puts "Not PCM!"
-  exit
-end
-channels, sample_rate, byte_rate, block_align, bits_per_sample = fmt[2..15].unpack("s1i1i1s1s1")
-puts "#{channels} channel(s)"
-puts "sample rate: #{sample_rate}"
-puts "bits per sample: #{bits_per_sample}"
