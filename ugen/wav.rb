@@ -83,12 +83,15 @@ module Ruck
   class WavIn
     include Source
     
+    linkable_attr :rate
+    
     def initialize(filename)
       @filename = filename
-      @offset = 0
+      @sample = 0.0
       @samples = []
       @ins = []
       @last = 0.0
+      @rate = 1.0
       @playing = false
       
       init_wav
@@ -120,12 +123,17 @@ module Ruck
     
     def next(chan = 0)
       return @last unless @playing
-      return 0 if @offset == @wav.size
       
+      offset = @sample.to_i * @block_align
       chan_offset = chan * @bits_per_sample
-      tot_offset = @offset + chan_offset
-      @last = @wav[tot_offset, @bits_per_sample].unpack("s1").first / @range
-      @offset += @block_align
+      
+      if offset + @block_align > @wav.size
+        @playing = false
+        return @last
+      end
+      
+      @last = @wav[offset + chan_offset, @bits_per_sample].unpack("s1").first / @range
+      @sample += rate
       @last
     end
     
