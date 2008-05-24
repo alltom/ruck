@@ -34,26 +34,28 @@ module Ruck
 
 end
 
-class Fixnum
+module RuckTime
+  def ms
+    self * Ruck::SAMPLE_RATE / 1000.0
+  end
+  
   def second
     self * Ruck::SAMPLE_RATE
   end
   alias_method :seconds, :second
   
-  def ms
-    self * Ruck::SAMPLE_RATE / 1000.0
+  def minute
+    self * Ruck::SAMPLE_RATE * 60.0
   end
+  alias_method :minutes, :minute
+end
+
+class Fixnum
+  include RuckTime
 end
 
 class Float
-  def second
-    self * Ruck::SAMPLE_RATE
-  end
-  alias_method :seconds, :second
-  
-  def ms
-    self * Ruck::SAMPLE_RATE / 1000.0
-  end
+  include RuckTime
 end
 
 require File.join(File.dirname(__FILE__), "shreduling")
