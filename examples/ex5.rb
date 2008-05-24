@@ -7,7 +7,7 @@ spork do
   play 0.5.seconds            # silence
   wav.play; play 1.second     # play first second
   
-  (r = Ramp.new(1.0, 2.0, 1.minutes)) >> blackhole
+  (r = Ramp.new(1.0, 2.0, 1.minute)) >> blackhole
   wav.link_rate lambda { r.last }
   play 3.seconds
 
