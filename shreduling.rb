@@ -70,7 +70,6 @@ module Ruck
         @dac.next
         @now += 1
       end
-      @now = min_now
       min
     end
     
