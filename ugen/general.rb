@@ -117,15 +117,18 @@ module Ruck
     include Source
     
     attr_accessor :attack_time
+    attr_accessor :attack_gain
     attr_accessor :decay_time
     attr_accessor :sustain_gain
     attr_accessor :release_time
     
     def initialize(attack_time = 50.ms,
+                   attack_gain = 1.0,
                    decay_time = 50.ms,
                    sustain_gain = 0.5,
                    release_time = 500.ms)
       @attack_time = attack_time
+      @attack_gain = attack_gain
       @decay_time = decay_time
       @sustain_gain = sustain_gain
       @release_time = release_time
@@ -164,7 +167,7 @@ module Ruck
     
     def on
       @ramp.reset
-      @ramp.from, @ramp.to = @gain, 1
+      @ramp.from, @ramp.to = @gain, @attack_gain
       @ramp.duration = @attack_time
       @state = :attack
     end
