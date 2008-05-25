@@ -61,7 +61,7 @@ module Riff
       chunks = []
       until @fn.eof?
         chunks << chunk = RiffReaderChunk.new(@fn, offset)
-        offset += chunk.size
+        offset += 8 + chunk.size
         @fn.seek offset + 8
       end
       chunks
