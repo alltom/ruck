@@ -47,6 +47,25 @@ module Ruck
     end
   end
   
+  class Noise
+    include Source
+    
+    linkable_attr :gain
+    
+    def initialize(gain = 1.0)
+      @gain = gain
+      @last = 0.0
+    end
+    
+    def next
+      @last = rand * gain
+    end
+    
+    def to_s
+      "<Noise: gain:#{gain}>"
+    end
+  end
+  
   class Ramp
     include Source
     
@@ -94,6 +113,7 @@ module Ruck
   end
   
   class ADSR
+    include Target
     include Source
     
     attr_accessor :attack_time
@@ -101,7 +121,10 @@ module Ruck
     attr_accessor :sustain_gain
     attr_accessor :release_time
     
-    def initialize(attack_time, decay_time, sustain_gain, release_time)
+    def initialize(attack_time = 50.ms,
+                   decay_time = 50.ms,
+                   sustain_gain = 0.5,
+                   release_time = 500.ms)
       @attack_time = attack_time
       @decay_time = decay_time
       @sustain_gain = sustain_gain
@@ -109,12 +132,14 @@ module Ruck
       
       @ramp = Ramp.new
       
+      @ins = []
       @last = 0.0
+      @gain = 0.0
       @state = :idle
     end
     
     def next
-      @last = case @state
+      @gain = case @state
               when :idle
                 0
               when :attack
@@ -134,18 +159,19 @@ module Ruck
                 @state = :idle if @ramp.finished?
                 @ramp.next
               end
+      @last = @ins.inject(0) { |samp, ugen| samp += ugen.next } * @gain
     end
     
     def on
       @ramp.reset
-      @ramp.from, @ramp.to = @last, 1
+      @ramp.from, @ramp.to = @gain, 1
       @ramp.duration = @attack_time
       @state = :attack
     end
     
     def off
       @ramp.reset
-      @ramp.from, @ramp.to = @last, 0
+      @ramp.from, @ramp.to = @gain, 0
       @ramp.duration = @release_time
       @state = :release
     end
