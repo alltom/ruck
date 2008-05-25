@@ -93,7 +93,7 @@ module Ruck
       @last = 0.0
       @rate = 1.0
       @loaded = false
-      @playing = false
+      @playing = true
       
       init_wav
     end
@@ -122,6 +122,10 @@ module Ruck
       @range = (2 ** (@bits_per_sample - 1)).to_f
       
       @loaded = true
+    end
+    
+    def duration
+      @loaded ? @wav.size / @block_align : 0
     end
     
     def next(chan = 0)
