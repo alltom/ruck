@@ -9,11 +9,9 @@ Work in Progress:
 
 But there's WAV output! (woot)
 
-Small TODO:
+TODO:
 - Add Events
-
-Big TODO:
-- Live audio
+- Live audio (see audio/)
 
 Comparison
 ==========
