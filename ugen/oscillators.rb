@@ -50,6 +50,31 @@ module Ruck
       @freq = freq
       @gain = gain
       @phase = 0.0
+      @last = 0.0
+    end
+
+    def next
+      @last = ((phase * 2.0) - 1.0) * gain
+      phase_forward
+      @last
+    end
+
+    def to_s
+      "<SawOsc: freq:#{freq} gain:#{gain}>"
+    end
+  end
+
+  class TriOsc
+    include Source
+    include Oscillator
+
+    linkable_attr :gain
+
+    def initialize(freq = 440.0, gain = 1.0)
+      @freq = freq
+      @gain = gain
+      @phase = 0.0
+      @last = 0.0
     end
 
     def next
@@ -63,7 +88,7 @@ module Ruck
     end
 
     def to_s
-      "<SawOsc: freq:#{freq} gain:#{gain}>"
+      "<TriOsc: freq:#{freq} gain:#{gain}>"
     end
   end
 
