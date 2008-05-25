@@ -92,6 +92,7 @@ module Ruck
       @ins = []
       @last = 0.0
       @rate = 1.0
+      @loaded = false
       @playing = false
       
       init_wav
@@ -101,28 +102,30 @@ module Ruck
       riff = Riff::RiffReader.new(@filename).chunks.first
       unless riff.type == "RIFF"
         $stderr.puts "#{@filename}: Not RIFF!"
-        @fn.close and return
+        return
       end
       unless riff[0..3] == "WAVE"
         $stderr.puts "#{@filename}: Not WAVE!"
-        @fn.close and return
+        return
       end
       
       riff.data_skip = 4 # skip "WAVE"
       fmt, @wav = riff.chunks
       unless fmt[0..1].unpack("s1").first == 1
         $stderr.puts "#{@filename}: Not PCM!"
-        @fn.close and return
+        return
       end
       
       @channels, @sample_rate, @byte_rate,
         @block_align, @bits_per_sample =
         fmt[2..15].unpack("s1i1i1s1s1")
       @range = (2 ** (@bits_per_sample - 1)).to_f
+      
+      @loaded = true
     end
     
     def next(chan = 0)
-      return @last unless @playing
+      return @last unless @loaded && @playing
       
       offset = @sample.to_i * @block_align
       chan_offset = chan * @bits_per_sample
