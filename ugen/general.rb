@@ -198,7 +198,7 @@ module Ruck
     end
     
     def next
-      @last = @oscillators.inject(0) { |samp, ugen| samp += ugen.next } * gain
+      @last = @oscillators.inject(0) { |samp, sin| samp += sin.next } * gain
     end
     
     def num_harmonics=(new_num)
