@@ -181,4 +181,34 @@ module Ruck
     
   end
   
+  class Harmonics
+    include Source
+    
+    linkable_attr :base_freq
+    linkable_attr :gain
+    
+    # gain is split among the harmonics according to proportions
+    # gain_proportions is normalized
+    def initialize(base_freq, num_harmonics, gain = 1.0)
+      self.base_freq = base_freq
+      self.num_harmonics = num_harmonics
+      self.gain = gain
+      
+      @last = 0.0
+    end
+    
+    def next
+      @last = @oscillators.inject(0) { |samp, ugen| samp += ugen.next } * gain
+    end
+    
+    def num_harmonics=(new_num)
+      @num_harmonics = new_num
+      @oscillators = (1..@num_harmonics).map { |num|
+        SinOsc.new(base_freq * num, 1.0 / @num_harmonics)
+      }
+      @num_harmonics
+    end
+    
+  end
+  
 end
