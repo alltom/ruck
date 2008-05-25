@@ -64,3 +64,12 @@ require File.join(File.dirname(__FILE__), "misc", "linkage")
 require File.join(File.dirname(__FILE__), "ugen", "general")
 require File.join(File.dirname(__FILE__), "ugen", "wav")
 require File.join(File.dirname(__FILE__), "ugen", "oscillators")
+
+unless File.readable?(ARGV[0])
+  $stderr.puts "Cannot read file #{ARGV[0]}"
+  exit
+end
+
+include Ruck
+spork("main") { require ARGV[0] }
+run

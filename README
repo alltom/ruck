@@ -10,7 +10,6 @@ Work in Progress:
 But there's WAV output! (woot)
 
 Small TODO:
-- Make Linkages more efficient (they're so slow)
 - Add Events
 
 Big TODO:
@@ -24,24 +23,16 @@ Comparison
     SinOsc s => dac;
     5::second => now;
     
+    // run "chuck script.ck"
     // then listen to your speakers
 
   Ruck:
 
-    require "ruck"
-    include Ruck
-    include UGen
-  
-    spork do
-  
-      wav = WavOut.new("out.wav")
-      SinOsc.new(440) >> wav >> blackhole
-
-      play 5.seconds
-
-    end
+    SinOsc.new(440) >> WavOut.new("out.wav") >> blackhole
+    play 5.seconds
     
-    // then listen to out.wav when it's done
+    # run "ruby ruck.rb script.rb"
+    # then listen to out.wav when it's done
 
-... so there's obviously a lot of work to do ...
-        ... isn't programming fun?!
+... there's obviously a lot of work to do ...
+       ... isn't programming fun?!
