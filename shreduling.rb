@@ -55,13 +55,15 @@ module Ruck
     end
     
     def sim
-      min = @shreds.min.now
-      (min - @now).times do
-        dac.next
+      min = @shreds.min
+      min_now = min.now
+      @dac = dac
+      (min_now - @now).times do
+        @dac.next
         @now += 1
-        puts "#{@now / SAMPLE_RATE} seconds rendered..." if @now % SAMPLE_RATE == 0
       end
-      @now = min
+      @now = min_now
+      min
     end
     
     def run
@@ -69,8 +71,7 @@ module Ruck
       @running = true
       
       while @shreds.length > 0
-        sim
-        @current_shred = @shreds.min
+        @current_shred = sim
         callcc { |cont| @current_shred.go(cont) }
         if @current_shred.finished
           puts "#{@current_shred} finished"
