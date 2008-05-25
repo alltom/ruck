@@ -31,6 +31,12 @@ module Ruck
   def play(samples)
     @shreduler.current_shred.yield(samples)
   end
+  
+  def finish
+    shred = @shreduler.current_shred
+    @shreduler.remove_shred shred
+    shred.finish
+  end
 
 end
 

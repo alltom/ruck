@@ -30,6 +30,10 @@ module Ruck
       samples
     end
     
+    def finish
+      @resume.call
+    end
+    
     def <=>(shred)
       @now <=> shred.now
     end
@@ -52,6 +56,10 @@ module Ruck
     def spork(name, &shred)
       puts "Adding shred \"#{name}\" at #{@now}"
       @shreds << Shred.new(self, @now, name, &shred)
+    end
+    
+    def remove_shred(shred)
+      @shreds.delete shred
     end
     
     def sim
