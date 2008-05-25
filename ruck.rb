@@ -2,7 +2,7 @@
 module Ruck
 
   CHANNELS = 1
-  SAMPLE_RATE = 44100
+  SAMPLE_RATE = 22050
   BITS_PER_SAMPLE = 16
   
   def dac
