@@ -3,12 +3,20 @@ module Ruck
 
   module Target
     def add_source(ugen)
-      @ins << ugen
+      if ugen.is_a? Array
+        @ins += ugen
+      else
+        @ins << ugen
+      end
       self
     end
     
     def remove_source(ugen)
-      @ins.delete(ugen)
+      if ugen.is_a? Array
+        @ins -= ugen
+      else
+        @ins.delete(ugen)
+      end
       self
     end
   end
@@ -235,4 +243,8 @@ module Ruck
     
   end
   
+end
+  
+class Array
+  include Ruck::Source
 end
