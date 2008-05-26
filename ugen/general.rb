@@ -186,6 +186,7 @@ module Ruck
     
     linkable_attr :base_freq
     linkable_attr :gain
+    attr_reader :num_harmonics
     
     # gain is split among the harmonics according to proportions
     # gain_proportions is normalized
@@ -207,6 +208,29 @@ module Ruck
         SinOsc.new(base_freq * num, 1.0 / @num_harmonics)
       }
       @num_harmonics
+    end
+    
+    def to_s
+      "<Harmonics: base_freq:#{base_freq} gain:#{gain} num_harmonics:#{num_harmonics}"
+    end
+    
+  end
+  
+  class LowPass
+    include Target
+    include Source
+    
+    def initialize
+      @ins = []
+      @last = 0.0
+    end
+    
+    def next
+      @last = (@last + @ins.inject(0) { |samp, ugen| samp += ugen.next }) / 2.0
+    end
+    
+    def to_s
+      "<LowPass>"
     end
     
   end
