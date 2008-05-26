@@ -4,7 +4,7 @@ module Ruck
   module Target
     def add_source(ugen)
       if ugen.is_a? Array
-        @ins += ugen
+        ugen.each { |u| add_source u }
       else
         @ins << ugen
       end
@@ -13,7 +13,7 @@ module Ruck
     
     def remove_source(ugen)
       if ugen.is_a? Array
-        @ins -= ugen
+        ugen.each { |u| remove_source u }
       else
         @ins.delete(ugen)
       end
