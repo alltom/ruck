@@ -10,3 +10,9 @@ def Object.linkable_attr(attr)
     self.metaclass.send(:define_method, "#{attr}_linked?".to_sym) { false }
   end
 end
+
+class Object
+  def L(&block)
+    block
+  end
+end
