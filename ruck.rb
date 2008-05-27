@@ -51,11 +51,15 @@ require File.join(File.dirname(__FILE__), "ugen", "oscillators")
 
 # run the ruck script
 
-unless File.readable?(ARGV[0])
-  $stderr.puts "Cannot read file #{ARGV[0]}"
-  exit
-end
+if __FILE__ == $0
 
-include Ruck
-spork("main") { require ARGV[0] }
-run
+  unless File.readable?(ARGV[0])
+    $stderr.puts "Cannot read file #{ARGV[0]}"
+    exit
+  end
+
+  include Ruck
+  spork("main") { require ARGV[0] }
+  run
+  
+end
