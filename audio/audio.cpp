@@ -1,3 +1,17 @@
+/* This builds for me (with make) into an audio.bundle which Ruby seems
+   to recognize, but when I try to load it with require("audio"), I get
+   this cryptic (to me) error message:
+   
+   LoadError: dlopen(./audio.bundle, 9): Symbol not found: __ZTISt9exception
+      Referenced from: /Users/tom/Projects/Mine/ruck/ruby/audio/audio.bundle
+      Expected in: dynamic lookup
+     - ./audio.bundle
+        	from ./audio.bundle
+        	from (irb):1
+        	from :0
+   
+   ... does anyone know how to make this work? */
+
 #include "ruby.h"
 #include "vector"
 #include "iostream"
