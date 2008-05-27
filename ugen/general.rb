@@ -78,6 +78,31 @@ module Ruck
       "<Step: value:#{value}>"
     end
   end
+
+  class Delay
+    include Target
+    include Source
+  
+    def initialize(samples)
+      @now = 0
+      @ins = []
+      @last = 0.0
+      
+      @queue = [0.0] * samples
+    end
+
+    def next(now)
+      return @last if @now == now
+      @now = now
+      
+      @queue << @ins.inject(0) { |samp, ugen| samp += ugen.next(now) }
+      @last = @queue.shift
+    end
+  
+    def to_s
+      "<Step: value:#{value}>"
+    end
+  end
   
   class Noise
     include Source
