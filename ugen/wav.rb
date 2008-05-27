@@ -8,6 +8,7 @@ module Ruck
     include Target
 
     def initialize(filename)
+      @now = 0
       @sample_rate = SAMPLE_RATE
       @bits_per_sample = BITS_PER_SAMPLE
       @channels = CHANNELS
@@ -19,8 +20,10 @@ module Ruck
       at_exit { self.save }
     end
 
-    def next
-      @last = @ins.inject(0) { |samp, ugen| samp += ugen.next }
+    def next(now)
+      return @last if @now == now
+      @now = now
+      @last = @ins.inject(0) { |samp, ugen| samp += ugen.next(now) }
       @samples << @last
       @last
     end
@@ -86,6 +89,7 @@ module Ruck
     linkable_attr :rate
     
     def initialize(filename)
+      @now = 0
       @filename = filename
       @sample = 0.0
       @samples = []
@@ -128,7 +132,10 @@ module Ruck
       @loaded ? @wav.size / @block_align : 0
     end
     
-    def next(chan = 0)
+    def next(now, chan = 0)
+      return @last if @now == now
+      @now = now
+      
       return @last unless @loaded && @playing
       
       offset = @sample.to_i * @block_align

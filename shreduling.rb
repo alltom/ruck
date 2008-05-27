@@ -67,7 +67,7 @@ module Ruck
       min_now = min.now
       @dac = dac
       (min_now - @now).times do
-        @dac.next
+        @dac.next(@now)
         @now += 1
       end
       min

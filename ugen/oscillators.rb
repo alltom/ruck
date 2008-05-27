@@ -23,13 +23,16 @@ module Ruck
     linkable_attr :gain
 
     def initialize(freq = 440.0, gain = 1.0)
+      @now = 0
       @freq = freq
       @gain = gain
       @phase = 0.0
       @last = 0.0
     end
 
-    def next
+    def next(now)
+      return @last if @now == now
+      @now = now
       @last = gain * Math.sin(phase * TWO_PI)
       phase_forward
       @last
@@ -47,13 +50,16 @@ module Ruck
     linkable_attr :gain
 
     def initialize(freq = 440.0, gain = 1.0)
+      @now = 0
       @freq = freq
       @gain = gain
       @phase = 0.0
       @last = 0.0
     end
 
-    def next
+    def next(now)
+      return @last if @now == now
+      @now = now
       @last = ((phase * 2.0) - 1.0) * gain
       phase_forward
       @last
@@ -71,13 +77,16 @@ module Ruck
     linkable_attr :gain
 
     def initialize(freq = 440.0, gain = 1.0)
+      @now = 0
       @freq = freq
       @gain = gain
       @phase = 0.0
       @last = 0.0
     end
 
-    def next
+    def next(now)
+      return @last if @now == now
+      @now = now
       @last = if phase < 0.5
         phase * 4.0 - 1.0
       else

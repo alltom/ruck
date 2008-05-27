@@ -30,7 +30,7 @@ module Ruck
       ugen.remove_source self
     end
     
-    def next; @last; end
+    def next(now); @last; end
     def last; @last; end
   end
 
@@ -41,13 +41,16 @@ module Ruck
     linkable_attr :gain
   
     def initialize(gain = 1.0)
+      @now = 0
       @gain = gain
       @ins = []
       @last = 0.0
     end
 
-    def next
-      @last = @ins.inject(0) { |samp, ugen| samp += ugen.next } * gain
+    def next(now)
+      return @last if @now == now
+      @now = now
+      @last = @ins.inject(0) { |samp, ugen| samp += ugen.next(now) } * gain
     end
   
     def to_s
@@ -61,10 +64,13 @@ module Ruck
     linkable_attr :value
   
     def initialize(value = 0.0)
+      @now = 0
       @last = value
     end
 
-    def next
+    def next(now)
+      return @last if @now == now
+      @now = now
       @last = value
     end
   
@@ -79,11 +85,14 @@ module Ruck
     linkable_attr :gain
     
     def initialize(gain = 1.0)
+      @now = 0
       @gain = gain
       @last = 0.0
     end
     
-    def next
+    def next(now)
+      return @last if @now == now
+      @now = now
       @last = rand * gain
     end
     
@@ -102,6 +111,7 @@ module Ruck
     linkable_attr :paused
     
     def initialize(from = 0.0, to = 1.0, duration = 1.second)
+      @now = 0
       @from = from
       @to = to
       @duration = duration
@@ -110,7 +120,9 @@ module Ruck
       @last = 0.0
     end
     
-    def next
+    def next(now)
+      return @last if @now == now
+      @now = now
       @last = progress * (to - from) + from
       inc_progress
       @last
@@ -153,6 +165,7 @@ module Ruck
                    decay_time = 50.ms,
                    sustain_gain = 0.5,
                    release_time = 500.ms)
+      @now = 0
       @attack_time = attack_time
       @attack_gain = attack_gain
       @decay_time = decay_time
@@ -167,7 +180,9 @@ module Ruck
       @state = :idle
     end
     
-    def next
+    def next(now)
+      return @last if @now == now
+      @now = now
       @gain = case @state
               when :idle
                 0
@@ -178,17 +193,17 @@ module Ruck
                   @ramp.duration = @decay_time
                   @state = :decay
                 end
-                @ramp.next
+                @ramp.next(now)
               when :decay
                 @state = :sustain if @ramp.finished?
-                @ramp.next
+                @ramp.next(now)
               when :sustain
                 @sustain_gain
               when :release
                 @state = :idle if @ramp.finished?
-                @ramp.next
+                @ramp.next(now)
               end
-      @last = @ins.inject(0) { |samp, ugen| samp += ugen.next } * @gain
+      @last = @ins.inject(0) { |samp, ugen| samp += ugen.next(now) } * @gain
     end
     
     def on
@@ -217,6 +232,7 @@ module Ruck
     # gain is split among the harmonics according to proportions
     # gain_proportions is normalized
     def initialize(base_freq, num_harmonics, gain = 1.0)
+      @now = 0
       self.base_freq = base_freq
       self.num_harmonics = num_harmonics
       self.gain = gain
@@ -224,8 +240,10 @@ module Ruck
       @last = 0.0
     end
     
-    def next
-      @last = @oscillators.inject(0) { |samp, sin| samp += sin.next } * gain
+    def next(now)
+      return @last if @now == now
+      @now = now
+      @last = @oscillators.inject(0) { |samp, sin| samp += sin.next(now) } * gain
     end
     
     def num_harmonics=(new_num)
@@ -247,12 +265,15 @@ module Ruck
     include Source
     
     def initialize
+      @now = 0
       @ins = []
       @last = 0.0
     end
     
-    def next
-      @last = (@last + @ins.inject(0) { |samp, ugen| samp += ugen.next }) / 2.0
+    def next(now)
+      return @last if @now == now
+      @now = now
+      @last = (@last + @ins.inject(0) { |samp, ugen| samp += ugen.next(now) }) / 2.0
     end
     
     def to_s
@@ -262,7 +283,8 @@ module Ruck
   end
   
 end
-  
+
+# Allow chucking all elements of an array to 
 class Array
   include Ruck::Source
 end
