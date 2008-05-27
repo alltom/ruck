@@ -12,6 +12,8 @@ But there's WAV output! (woot)
 TODO:
 - Add Events
 - Live audio (see audio/)
+- Multi-channel support on WavOut (and then dac)
+- Compressor, limiter
 
 Comparison
 ==========
