@@ -6,7 +6,7 @@ ramps = (1..4).map { Ramp.new(0, 0, 50.ms) }
 oscillators = (1..4).map { SinOsc.new }
 [[oscillators] >> wav, ramps] >> blackhole
 
-(0..3).each { |i| oscillators[i].link_freq L{ ramps[i].next } }
+(0..3).each { |i| oscillators[i].link_freq L{ ramps[i].last } }
 
 #vowel_ah = [1000, 1400]
 #vowel_eh = [500, 2300]
