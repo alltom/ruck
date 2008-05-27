@@ -1,5 +1,10 @@
 
 module RuckTime
+  def sample
+    self.to_i
+  end
+  alias_method :samples, :sample
+  
   def ms
     self * Ruck::SAMPLE_RATE / 1000.0
   end
