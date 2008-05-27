@@ -54,6 +54,24 @@ module Ruck
       "<Gain: gain:#{gain}>"
     end
   end
+
+  class Step
+    include Source
+    
+    linkable_attr :value
+  
+    def initialize(value = 0.0)
+      @last = value
+    end
+
+    def next
+      @last = value
+    end
+  
+    def to_s
+      "<Step: value:#{value}>"
+    end
+  end
   
   class Noise
     include Source
