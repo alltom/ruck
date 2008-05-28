@@ -15,7 +15,11 @@ module Ruck
     
     def go(resume)
       @resume = resume
-      @block.call
+      begin
+        @block.call
+      rescue => e
+        puts "#{self} exited uncleanly:", e.backtrace
+      end
       @finished = true
     end
     
