@@ -1,8 +1,6 @@
 
 def Object.linkable_attr(attr)
-  define_method(attr) do
-    instance_variable_get("@#{attr}")
-  end
+  attr_reader attr
   define_method("#{attr}=") do |val|
     instance_variable_set("@#{attr}", val)
     if val.respond_to? :call
