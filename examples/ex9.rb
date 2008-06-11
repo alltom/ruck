@@ -13,7 +13,7 @@ wav = WavOut.new("ex9.wav")
 s = SinOsc.new(440, 0.5)
 inverted = Step.new
 delay = Delay.new(10.ms)
-inverted.link_value L{ -delay.last }
+inverted.value = L{ -delay.last }
 
 # BUG: order of the next two lines matter;
 #      otherwise, delay.last will be one sample off
