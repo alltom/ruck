@@ -4,15 +4,18 @@ module Ruck
   # saves sound passed in to export to file later
   # passes sound through live
   class WavOut
+    include UGen
     include Source
     include Target
 
-    def initialize(filename)
+    def initialize(attrs = {})
+      require_attrs attrs, [:filename]
+      @filename = attrs.delete(:filename)
+      parse_attrs attrs
       @now = 0
       @sample_rate = SAMPLE_RATE
       @bits_per_sample = BITS_PER_SAMPLE
       @channels = CHANNELS
-      @filename = filename
       @samples = []
       @ins = []
       @last = 0.0
@@ -84,13 +87,17 @@ module Ruck
   # - assumes sample rate matches ours
   # - no way to chuck any channel but the first
   class WavIn
+    include UGen
     include Source
     
     linkable_attr :rate
     
-    def initialize(filename)
+    def initialize(attrs = {})
+      require_attrs attrs, [:filename]
+      @filename = attrs.delete(:filename)
+      parse_attrs attrs
+      
       @now = 0
-      @filename = filename
       @sample = 0.0
       @samples = []
       @ins = []

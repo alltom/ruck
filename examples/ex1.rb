@@ -1,5 +1,5 @@
 def beep(wav)
-  (s = SawOsc.new(440, 0.25)) >> wav
+  (s = SawOsc.new(:freq => 440, :gain => 0.25)) >> wav
   10.times do
     play 0.1.seconds
     s.freq *= 1.2
@@ -7,9 +7,9 @@ def beep(wav)
   s << wav
 end
 
-wav = WavOut.new("ex1.wav")
-SinOsc.new(440, 0.25) >> wav
-SinOsc.new(880, 0.25) >> wav
+wav = WavOut.new(:filename => "ex1.wav")
+SinOsc.new(:freq => 440, :gain => 0.25) >> wav
+SinOsc.new(:freq => 880, :gain => 0.25) >> wav
 
 wav >> blackhole
 

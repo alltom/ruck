@@ -2,6 +2,7 @@
 module Ruck
     
   module Oscillator
+    include UGen
     TWO_PI = 2 * Math::PI
     
     def self.included(base)
@@ -23,10 +24,10 @@ module Ruck
     linkable_attr :freq
     linkable_attr :gain
 
-    def initialize(freq = 440.0, gain = 1.0)
+    def initialize(attrs = {})
+      parse_attrs({ :freq => 440.0,
+                    :gain => 1.0 }.merge(attrs))
       @now = 0
-      self.freq = freq
-      self.gain = gain
       @phase = 0.0
       @last = 0.0
     end
@@ -50,10 +51,10 @@ module Ruck
 
     linkable_attr :gain
 
-    def initialize(freq = 440.0, gain = 1.0)
+    def initialize(attrs = {})
+      parse_attrs({ :freq => 440.0,
+                    :gain => 1.0 }.merge(attrs))
       @now = 0
-      @freq = freq
-      @gain = gain
       @phase = 0.0
       @last = 0.0
     end
@@ -77,10 +78,10 @@ module Ruck
 
     linkable_attr :gain
 
-    def initialize(freq = 440.0, gain = 1.0)
+    def initialize(attrs = {})
+      parse_attrs({ :freq => 440.0,
+                    :gain => 1.0 }.merge(attrs))
       @now = 0
-      @freq = freq
-      @gain = gain
       @phase = 0.0
       @last = 0.0
     end

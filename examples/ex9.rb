@@ -9,10 +9,10 @@ https://lists.cs.princeton.edu/pipermail/chuck-users/2008-May/002983.html
 # Well, we don't have stereo output yet
 # But let's keep this around until ruck catches up
 
-wav = WavOut.new("ex9.wav")
-s = SinOsc.new(440, 0.5)
+wav = WavOut.new(:filename => "ex9.wav")
+s = SinOsc.new(:freq => 440, :gain => 0.5)
 inverted = Step.new
-delay = Delay.new(10.ms)
+delay = Delay.new(:time => 10.ms)
 inverted.value = L{ -delay.last }
 
 # BUG: order of the next two lines matter;

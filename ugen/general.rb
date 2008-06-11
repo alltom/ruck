@@ -1,5 +1,27 @@
 
 module Ruck
+  
+  module UGen
+    def require_attrs(attrs, names)
+      names.each do |name|
+        unless attrs.has_key? name
+          raise "#{self} requires attribute #{name}"
+        end
+      end
+    end
+    
+    def parse_attrs(attrs)
+      attrs.each do |attr, value|
+        send("#{attr}=", value)
+      end
+    end
+    
+    def pop_attrs(attrs, names)
+      names.map { |name| attrs.delete(name) }
+    end
+    
+    attr :name
+  end
 
   module Target
     def add_source(ugen)
@@ -35,14 +57,15 @@ module Ruck
   end
 
   class Gain
+    include UGen
     include Source
     include Target
     
     linkable_attr :gain
   
-    def initialize(gain = 1.0)
+    def initialize(attrs = {})
+      parse_attrs({ :gain => 1.0 }.merge(attrs))
       @now = 0
-      @gain = gain
       @ins = []
       @last = 0.0
     end
@@ -59,11 +82,13 @@ module Ruck
   end
 
   class Step
+    include UGen
     include Source
     
     linkable_attr :value
   
-    def initialize(value = 0.0)
+    def initialize(attrs = {})
+      parse_attrs({ :value => 0.0 }.merge(attrs))
       @now = 0
       @last = value
     end
@@ -80,14 +105,17 @@ module Ruck
   end
 
   class Delay
+    include UGen
     include Target
     include Source
   
-    def initialize(samples)
+    def initialize(attrs = {})
+      require_attrs attrs, [:time]
+      samples = attrs.delete(:time)
+      parse_attrs attrs
       @now = 0
       @ins = []
       @last = 0.0
-      
       @queue = [0.0] * samples
     end
 
@@ -105,13 +133,14 @@ module Ruck
   end
   
   class Noise
+    include UGen
     include Source
     
     linkable_attr :gain
     
-    def initialize(gain = 1.0)
+    def initialize(attrs = {})
+      parse_attrs({ :gain => 1.0 }.merge(attrs))
       @now = 0
-      @gain = gain
       @last = 0.0
     end
     
@@ -127,6 +156,7 @@ module Ruck
   end
   
   class Ramp
+    include UGen
     include Source
     
     linkable_attr :from
@@ -135,13 +165,13 @@ module Ruck
     linkable_attr :progress
     linkable_attr :paused
     
-    def initialize(from = 0.0, to = 1.0, duration = 1.second)
+    def initialize(attrs = {})
+      parse_attrs({ :from => 0.0,
+                    :to => 1.0,
+                    :duration => 1.second }.merge(attrs))
       @now = 0
-      @from = from
-      @to = to
-      @duration = duration
-      @paused = false
       @progress = 0.0
+      @paused = false
       @last = 0.0
     end
     
@@ -176,6 +206,7 @@ module Ruck
   end
   
   class ADSR
+    include UGen
     include Target
     include Source
     
@@ -185,17 +216,13 @@ module Ruck
     attr_accessor :sustain_gain
     attr_accessor :release_time
     
-    def initialize(attack_time = 50.ms,
-                   attack_gain = 1.0,
-                   decay_time = 50.ms,
-                   sustain_gain = 0.5,
-                   release_time = 500.ms)
+    def initialize(attrs = {})
+      parse_attrs({ :attack_time => 50.ms,
+                    :attack_gain => 1.0,
+                    :decay_time => 50.ms,
+                    :sustain_gain => 0.5,
+                    :release_time => 500.ms }.merge(attrs))
       @now = 0
-      @attack_time = attack_time
-      @attack_gain = attack_gain
-      @decay_time = decay_time
-      @sustain_gain = sustain_gain
-      @release_time = release_time
       
       @ramp = Ramp.new
       
@@ -243,66 +270,6 @@ module Ruck
       @ramp.from, @ramp.to = @gain, 0
       @ramp.duration = @release_time
       @state = :release
-    end
-    
-  end
-  
-  class Harmonics
-    include Source
-    
-    linkable_attr :base_freq
-    linkable_attr :gain
-    attr_reader :num_harmonics
-    
-    # gain is split among the harmonics according to proportions
-    # gain_proportions is normalized
-    def initialize(base_freq, num_harmonics, gain = 1.0)
-      @now = 0
-      self.base_freq = base_freq
-      self.num_harmonics = num_harmonics
-      self.gain = gain
-      
-      @last = 0.0
-    end
-    
-    def next(now)
-      return @last if @now == now
-      @now = now
-      @last = @oscillators.inject(0) { |samp, sin| samp += sin.next(now) } * gain
-    end
-    
-    def num_harmonics=(new_num)
-      @num_harmonics = new_num
-      @oscillators = (1..@num_harmonics).map { |num|
-        SinOsc.new(base_freq * num, 1.0 / @num_harmonics)
-      }
-      @num_harmonics
-    end
-    
-    def to_s
-      "<Harmonics: base_freq:#{base_freq} gain:#{gain} num_harmonics:#{num_harmonics}"
-    end
-    
-  end
-  
-  class LowPass
-    include Target
-    include Source
-    
-    def initialize
-      @now = 0
-      @ins = []
-      @last = 0.0
-    end
-    
-    def next(now)
-      return @last if @now == now
-      @now = now
-      @last = (@last + @ins.inject(0) { |samp, ugen| samp += ugen.next(now) }) / 2.0
-    end
-    
-    def to_s
-      "<LowPass>"
     end
     
   end

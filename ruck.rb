@@ -12,7 +12,7 @@ module Ruck
   def blackhole
     return @@blackhole if defined? @@blackhole
     
-    @@blackhole = Gain.new(0.0)
+    @@blackhole = Gain.new(:gain => 0.0)
     @@blackhole >> dac
     @@blackhole
   end
