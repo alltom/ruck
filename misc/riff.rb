@@ -28,8 +28,8 @@ module Riff
     # pass a Range of bytes, or start and length
     def [](*args)
       first, last = case args.length
-                    when 1: [args.first.begin, args.first.end]
-                    when 2: [args[0], args[0] + args[1]]
+                    when 1; [args.first.begin, args.first.end]
+                    when 2; [args[0], args[0] + args[1]]
                     end
       @fn.seek @data_start + @data_skip + first
       @fn.read(last - first + 1)
