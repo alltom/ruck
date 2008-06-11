@@ -20,12 +20,13 @@ module Ruck
     include Source
     include Oscillator
 
+    linkable_attr :freq
     linkable_attr :gain
 
     def initialize(freq = 440.0, gain = 1.0)
       @now = 0
-      @freq = freq
-      @gain = gain
+      self.freq = freq
+      self.gain = gain
       @phase = 0.0
       @last = 0.0
     end
