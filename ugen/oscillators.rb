@@ -39,9 +39,9 @@ module Ruck
       phase_forward
       @last
     end
-
-    def to_s
-      "<SinOsc: freq:#{freq} gain:#{gain}>"
+    
+    def attr_names
+      [:freq, :gain, :phase]
     end
   end
 
@@ -66,9 +66,9 @@ module Ruck
       phase_forward
       @last
     end
-
-    def to_s
-      "<SawOsc: freq:#{freq} gain:#{gain}>"
+    
+    def attr_names
+      [:freq, :gain, :phase]
     end
   end
 
@@ -97,9 +97,9 @@ module Ruck
       phase_forward
       @last
     end
-
-    def to_s
-      "<TriOsc: freq:#{freq} gain:#{gain}>"
+    
+    def attr_names
+      [:freq, :gain, :phase]
     end
   end
 

@@ -1,6 +1,6 @@
 
 module Ruck
-  
+
   module UGen
     def require_attrs(attrs, names)
       names.each do |name|
@@ -9,17 +9,21 @@ module Ruck
         end
       end
     end
-    
+
     def parse_attrs(attrs)
       attrs.each do |attr, value|
         send("#{attr}=", value)
       end
     end
-    
+
     def pop_attrs(attrs, names)
       names.map { |name| attrs.delete(name) }
     end
-    
+
+    def to_s
+      "<#{self.class} #{attr_names.map { |a| "#{a}:#{send a}" }.join " "}>"
+    end
+
     attr :name
   end
 
@@ -32,7 +36,7 @@ module Ruck
       end
       self
     end
-    
+
     def remove_source(ugen)
       if ugen.is_a? Array
         ugen.each { |u| remove_source u }
@@ -47,11 +51,11 @@ module Ruck
     def >>(ugen)
       ugen.add_source self
     end
-    
+
     def <<(ugen)
       ugen.remove_source self
     end
-    
+
     def next(now); @last; end
     def last; @last; end
   end
@@ -60,9 +64,9 @@ module Ruck
     include UGen
     include Source
     include Target
-    
+
     linkable_attr :gain
-  
+
     def initialize(attrs = {})
       parse_attrs({ :gain => 1.0 }.merge(attrs))
       @now = 0
@@ -75,18 +79,18 @@ module Ruck
       @now = now
       @last = @ins.inject(0) { |samp, ugen| samp += ugen.next(now) } * gain
     end
-  
-    def to_s
-      "<Gain: gain:#{gain}>"
+
+    def attr_names
+      [:gain]
     end
   end
 
   class Step
     include UGen
     include Source
-    
+
     linkable_attr :value
-  
+
     def initialize(attrs = {})
       parse_attrs({ :value => 0.0 }.merge(attrs))
       @now = 0
@@ -98,9 +102,9 @@ module Ruck
       @now = now
       @last = value
     end
-  
-    def to_s
-      "<Step: value:#{value}>"
+
+    def attr_names
+      [:value]
     end
   end
 
@@ -108,7 +112,7 @@ module Ruck
     include UGen
     include Target
     include Source
-  
+
     def initialize(attrs = {})
       require_attrs attrs, [:time]
       samples = attrs.delete(:time)
@@ -122,49 +126,49 @@ module Ruck
     def next(now)
       return @last if @now == now
       @now = now
-      
+
       @queue << @ins.inject(0) { |samp, ugen| samp += ugen.next(now) }
       @last = @queue.shift
     end
-  
-    def to_s
-      "<Step: value:#{value}>"
+
+    def attr_names
+      [:time]
     end
   end
-  
+
   class Noise
     include UGen
     include Source
-    
+
     linkable_attr :gain
-    
+
     def initialize(attrs = {})
       parse_attrs({ :gain => 1.0 }.merge(attrs))
       @now = 0
       @last = 0.0
     end
-    
+
     def next(now)
       return @last if @now == now
       @now = now
       @last = rand * gain
     end
-    
-    def to_s
-      "<Noise: gain:#{gain}>"
+
+    def attr_names
+      [:gain]
     end
   end
-  
+
   class Ramp
     include UGen
     include Source
-    
+
     linkable_attr :from
     linkable_attr :to
     linkable_attr :duration
     linkable_attr :progress
     linkable_attr :paused
-    
+
     def initialize(attrs = {})
       parse_attrs({ :from => 0.0,
                     :to => 1.0,
@@ -174,7 +178,7 @@ module Ruck
       @paused = false
       @last = 0.0
     end
-    
+
     def next(now)
       return @last if @now == now
       @now = now
@@ -182,40 +186,44 @@ module Ruck
       inc_progress
       @last
     end
-    
+
     def reverse
       @from, @to = @to, @from
     end
-    
+
     def reset
       @progress = 0.0
     end
-    
+
     def finished?
       progress == 1.0
     end
-    
+
+    def attr_names
+      [:from, :to, :duration, :progress, :paused]
+    end
+
     protected
-    
+
       def inc_progress
         return if @paused
         @progress += 1.0 / duration
         @progress = 1.0 if @progress > 1.0
       end
-    
+
   end
-  
+
   class ADSR
     include UGen
     include Target
     include Source
-    
+
     attr_accessor :attack_time
     attr_accessor :attack_gain
     attr_accessor :decay_time
     attr_accessor :sustain_gain
     attr_accessor :release_time
-    
+
     def initialize(attrs = {})
       parse_attrs({ :attack_time => 50.ms,
                     :attack_gain => 1.0,
@@ -223,15 +231,15 @@ module Ruck
                     :sustain_gain => 0.5,
                     :release_time => 500.ms }.merge(attrs))
       @now = 0
-      
+
       @ramp = Ramp.new
-      
+
       @ins = []
       @last = 0.0
       @gain = 0.0
       @state = :idle
     end
-    
+
     def next(now)
       return @last if @now == now
       @now = now
@@ -257,26 +265,30 @@ module Ruck
               end
       @last = @ins.inject(0) { |samp, ugen| samp += ugen.next(now) } * @gain
     end
-    
+
     def on
       @ramp.reset
       @ramp.from, @ramp.to = @gain, @attack_gain
       @ramp.duration = @attack_time
       @state = :attack
     end
-    
+
     def off
       @ramp.reset
       @ramp.from, @ramp.to = @gain, 0
       @ramp.duration = @release_time
       @state = :release
     end
-    
+
+    def attr_names
+      [:attack_time, :attack_gain, :decay_time, :sustain_gain, :release_time]
+    end
+
   end
-  
+
 end
 
-# Allow chucking all elements of an array to 
+# Allow chucking all elements of an array to
 class Array
   include Ruck::Source
 end

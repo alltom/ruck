@@ -7,6 +7,8 @@ module Ruck
     include UGen
     include Source
     include Target
+    
+    attr_reader :filename
 
     def initialize(attrs = {})
       require_attrs attrs, [:filename]
@@ -36,8 +38,8 @@ module Ruck
       File.open(@filename, "wb") { |f| f.write encode }
     end
 
-    def to_s
-      "<WavOut: filename:#{@filename}>"
+    def attr_names
+      [:filename]
     end
 
     private
@@ -91,6 +93,7 @@ module Ruck
     include Source
     
     linkable_attr :rate
+    attr_reader :filename
     
     def initialize(attrs = {})
       require_attrs attrs, [:filename]
@@ -137,6 +140,10 @@ module Ruck
     
     def duration
       @loaded ? @wav.size / @block_align : 0
+    end
+    
+    def attr_names
+      [:filename, :rate]
     end
     
     def next(now, chan = 0)
