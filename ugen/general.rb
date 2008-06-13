@@ -21,10 +21,12 @@ module Ruck
     end
 
     def to_s
-      "<#{self.class} #{attr_names.map { |a| "#{a}:#{send a}" }.join " "}>"
+      "<#{self.class}" +
+        (name ? "(#{name})" : "") +
+        " #{attr_names.map { |a| "#{a}:#{send a}" }.join " "}>"
     end
 
-    attr :name
+    attr_accessor :name
   end
 
   module Target
