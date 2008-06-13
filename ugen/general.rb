@@ -50,10 +50,12 @@ module Ruck
   module MultiChannelTarget
     def add_source(ugen)
       @channels.each { |chan| chan.add_source ugen }
+      self
     end
 
     def remove_source(ugen)
       @channels.each { |chan| chan.remove_source ugen }
+      self
     end
 
     def chan(num)
