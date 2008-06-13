@@ -4,20 +4,11 @@ LOG = Logger.new(STDOUT)
 
 module Ruck
 
-  CHANNELS = 1
   SAMPLE_RATE = 22050
   BITS_PER_SAMPLE = 16
   
-  def dac
-    @@dac ||= DAC.new :num_channels => 1
-  end
-  
   def blackhole
-    return @@blackhole if defined? @@blackhole
-    
-    @@blackhole = Bus.new
-    @@blackhole >> dac
-    @@blackhole
+    @@blackhole ||= Bus.new
   end
   
   def run

@@ -68,14 +68,14 @@ module Ruck
     end
 
     # synthesizes audio by simulating fake time
-    #   on all UGens connected to the dac (or blackhole)
+    #   on all UGens connected to the blackhole (and later, DAC)
     def sim
       min = @shreds.min # furthest behind (Shred#<=> uses Shred's current time)
       min_now = min.now
 
       # simulate samples up to furthest behind shred
       (min_now - @now).times do
-        @output_buses.each { |chan| chan.next @now }
+        blackhole.next @now
         @now += 1
       end
 
@@ -88,7 +88,6 @@ module Ruck
     def run
       LOG.debug "shreduler starting"
       @running = true
-      @output_buses = dac.channels
 
       while @shreds.length > 0
         @current_shred = sim
