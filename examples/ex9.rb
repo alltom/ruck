@@ -12,12 +12,9 @@ https://lists.cs.princeton.edu/pipermail/chuck-users/2008-May/002983.html
 wav = WavOut.new(:filename => "ex9.wav")
 s = SinOsc.new(:freq => 440, :gain => 0.5)
 inverted = Step.new
-delay = Delay.new(:time => 10.ms)
-inverted.value = L{ -delay.last }
+delay = Delay.new(:time => 0)
+inverted.value = L{ -delay.next(now) }
 
-# BUG: order of the next two lines matter;
-#      otherwise, delay.last will be one sample off
-#      (try setting delay to 0.samples)
 s >> delay >> blackhole
 [s, inverted] >> wav >> blackhole
 

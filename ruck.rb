@@ -10,6 +10,10 @@ module Ruck
   def blackhole
     @@blackhole ||= Bus.new
   end
+  
+  def now
+    @shreduler.now
+  end
 
   def run
     @shreduler ||= Shreduler.new
