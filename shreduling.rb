@@ -72,11 +72,10 @@ module Ruck
     def sim
       min = @shreds.min # furthest behind (Shred#<=> uses Shred's current time)
       min_now = min.now
-      @dac = dac
 
       # simulate samples up to furthest behind shred
       (min_now - @now).times do
-        @dac.channels.each { |chan| chan.next @now }
+        @output_buses.each { |chan| chan.next @now }
         @now += 1
       end
 
@@ -89,6 +88,7 @@ module Ruck
     def run
       puts "shreduler starting"
       @running = true
+      @output_buses = dac.channels
 
       while @shreds.length > 0
         @current_shred = sim

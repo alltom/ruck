@@ -47,6 +47,28 @@ module Ruck
     end
   end
 
+  module MultiChannelTarget
+    def add_source(ugen)
+      @channels.each { |chan| chan.add_source ugen }
+    end
+
+    def remove_source(ugen)
+      @channels.each { |chan| chan.remove_source ugen }
+    end
+
+    def chan(num)
+      @channels[num]
+    end
+
+    def channels
+      @channels.dup
+    end
+
+    def num_channels
+      @channels.length
+    end
+  end
+
   module Source
     def >>(ugen)
       ugen.add_source self
@@ -76,7 +98,7 @@ module Ruck
       @now = now
       @last = @ins.inject(0) { |samp, ugen| samp += ugen.next(now) }
     end
-    
+
     def attr_names
       []
     end
@@ -84,31 +106,13 @@ module Ruck
 
   class DAC
     include UGen
-    include Target
-
-    attr_accessor :num_channels
+    include MultiChannelTarget
 
     def initialize(attrs = {})
       require_attrs attrs, [:num_channels]
       num_channels = attrs.delete(:num_channels)
       parse_attrs attrs
       @channels = (1..num_channels).map { Bus.new }
-    end
-
-    def chan(num)
-      @channels[num]
-    end
-    
-    def channels
-      @channels.dup
-    end
-
-    def add_source(ugen)
-      @channels.each { |chan| chan.add_source ugen }
-    end
-
-    def remove_source(ugen)
-      @channels.each { |chan| chan.remove_source ugen }
     end
 
     def attr_names
