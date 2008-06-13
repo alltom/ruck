@@ -33,7 +33,7 @@ module Ruck
     end
 
     def save
-      puts "Saving WAV to #{@filename}..."
+      LOG.info "Saving WAV to #{@filename}..."
       File.open(@filename, "wb") { |f| f.write encode }
     end
 
@@ -113,18 +113,18 @@ module Ruck
     def init_wav
       riff = Riff::RiffReader.new(@filename).chunks.first
       unless riff.type == "RIFF"
-        $stderr.puts "#{@filename}: Not RIFF!"
+        LOG.error "#{@filename}: Not RIFF!"
         return
       end
       unless riff[0..3] == "WAVE"
-        $stderr.puts "#{@filename}: Not WAVE!"
+        LOG.error "#{@filename}: Not WAVE!"
         return
       end
       
       riff.data_skip = 4 # skip "WAVE"
       fmt, @wav = riff.chunks
       unless fmt[0..1].unpack("s1").first == 1
-        $stderr.puts "#{@filename}: Not PCM!"
+        LOG.error "#{@filename}: Not PCM!"
         return
       end
       

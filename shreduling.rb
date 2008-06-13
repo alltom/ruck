@@ -18,7 +18,7 @@ module Ruck
       begin
         @block.call
       rescue => e
-        puts "#{self} exited uncleanly:", e, e.backtrace
+        LOG.error "#{self} exited uncleanly:", e, e.backtrace
       end
       @finished = true
     end
@@ -59,7 +59,7 @@ module Ruck
     end
 
     def spork(name, &shred)
-      puts "Adding shred \"#{name}\" at #{@now}"
+      LOG.debug "Adding shred \"#{name}\" at #{@now}"
       @shreds << Shred.new(self, @now, name, &shred)
     end
 
@@ -86,7 +86,7 @@ module Ruck
     # executes all shreds and synthesizes audio
     #   until all shreds exit
     def run
-      puts "shreduler starting"
+      LOG.debug "shreduler starting"
       @running = true
       @output_buses = dac.channels
 
@@ -97,7 +97,7 @@ module Ruck
         callcc { |cont| @current_shred.go(cont) }
 
         if @current_shred.finished
-          puts "#{@current_shred} finished"
+          LOG.debug "#{@current_shred} finished"
           @shreds.delete(@current_shred)
         end
       end
