@@ -9,18 +9,13 @@ https://lists.cs.princeton.edu/pipermail/chuck-users/2008-May/002983.html
 # Well, we don't have stereo output yet
 # But let's keep this around until ruck catches up
 
-wav = WavOut.new(:filename => "ex9.wav")
+wav = WavOut.new(:filename => "ex9.wav", :num_channels => 2)
 s = SinOsc.new(:freq => 440, :gain => 0.5)
-inverted = Step.new
-delay = Delay.new(:time => 0)
-inverted.value = L{ -delay.next(now) }
 
-s >> delay >> blackhole
+delayed = Delay.new(:time => 1.sample)
+inverted = Step.new :value => L{ -delayed.next(now) }
+
 [s, inverted] >> wav >> blackhole
-
-# One day we'd hope to write instead
-# [s >> delay, wav.all_channels] >> blackhole
-# s >> wav.chan(0)
-# inverted >> wav.chan(1)
+s >> delayed >> blackhole
 
 play 3.seconds
