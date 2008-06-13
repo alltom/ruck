@@ -18,7 +18,7 @@ module Ruck
       begin
         @block.call
       rescue => e
-        LOG.error "#{self} exited uncleanly:", e, e.backtrace
+        LOG.error "#{self} exited uncleanly:\n#{e}\n#{e.backtrace}"
       end
       @finished = true
     end
