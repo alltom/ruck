@@ -1,8 +1,8 @@
 
 module Ruck
 
-  # saves sound passed in to export to file later
-  # passes sound through live
+  # saves all incoming samples in memory to export to disk later
+  # outputs 0.0 samples
   class WavOut
     include UGen
     include Source
