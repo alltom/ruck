@@ -1,34 +1,36 @@
 
 module Ruck
-  
+
   # saves sound passed in to export to file later
   # passes sound through live
   class WavOut
     include UGen
     include Source
-    include Target
-    
+    include MultiChannelTarget
+
     attr_reader :filename
 
     def initialize(attrs = {})
       require_attrs attrs, [:filename]
       @filename = attrs.delete(:filename)
+      @num_channels = attrs.delete(:num_channels) || 1
       parse_attrs attrs
+
+      @channels = (1..@num_channels).map { Bus.new }
+
       @sample_rate = SAMPLE_RATE
       @bits_per_sample = BITS_PER_SAMPLE
-      @channels = CHANNELS
-      @samples = []
+      @samples = (1..@num_channels).map { [] }
       @ins = []
       @last = 0.0
-      
-      at_exit { self.save }
+
+      at_exit { save }
     end
 
     def next(now)
       return @last if @now == now
       @now = now
-      @last = @ins.inject(0) { |samp, ugen| samp += ugen.next(now) }
-      @samples << @last
+      @samples << @channels.map { |chan| chan.next now }
       @last
     end
 
@@ -44,20 +46,20 @@ module Ruck
     private
 
       def encode
-        range = 2 ** (BITS_PER_SAMPLE - 1)
         chunk("RIFF") do |riff|
           riff << ascii("WAVE")
           riff << chunk("fmt ") do |fmt|
             fmt << short(1) # format = 1: PCM (no compression)
-            fmt << short(@channels) # num channels
+            fmt << short(@num_channels)
             fmt << int(@sample_rate)
-            fmt << int((@sample_rate * @channels * (@bits_per_sample / 8))) # byte-rate
-            fmt << short((@channels * @bits_per_sample/8)) # block align
+            fmt << int((@sample_rate * @num_channels * (@bits_per_sample / 8))) # byte-rate
+            fmt << short((@num_channels * @bits_per_sample/8)) # block align
             fmt << short(@bits_per_sample) # bits/sample
           end
           riff << chunk("data") do |data|
-            @samples.each do |sample|
-              data << [sample * range].pack("s1")
+            range = 2 ** (BITS_PER_SAMPLE - 1)
+            @samples.each do |sample_list|
+              sample_list.each { |sample| data << [sample * range].pack("s1") }
             end
           end
         end
@@ -82,7 +84,7 @@ module Ruck
       end
 
   end
-  
+
   # plays sound stored in a RIFF WAV file
   # bugs:
   # - assumes sample rate matches ours
@@ -90,15 +92,15 @@ module Ruck
   class WavIn
     include UGen
     include Source
-    
+
     linkable_attr :rate
     attr_reader :filename
-    
+
     def initialize(attrs = {})
       require_attrs attrs, [:filename]
       @filename = attrs.delete(:filename)
       parse_attrs attrs
-      
+
       @sample = 0.0
       @samples = []
       @ins = []
@@ -106,10 +108,10 @@ module Ruck
       @rate = 1.0
       @loaded = false
       @playing = true
-      
+
       init_wav
     end
-    
+
     def init_wav
       riff = Riff::RiffReader.new(@filename).chunks.first
       unless riff.type == "RIFF"
@@ -120,56 +122,56 @@ module Ruck
         LOG.error "#{@filename}: Not WAVE!"
         return
       end
-      
+
       riff.data_skip = 4 # skip "WAVE"
       fmt, @wav = riff.chunks
       unless fmt[0..1].unpack("s1").first == 1
         LOG.error "#{@filename}: Not PCM!"
         return
       end
-      
-      @channels, @sample_rate, @byte_rate,
+
+      @num_channels, @sample_rate, @byte_rate,
         @block_align, @bits_per_sample =
         fmt[2..15].unpack("s1i1i1s1s1")
       @range = (2 ** (@bits_per_sample - 1)).to_f
-      
+
       @loaded = true
     end
-    
+
     def duration
       @loaded ? @wav.size / @block_align : 0
     end
-    
+
     def attr_names
       [:filename, :rate]
     end
-    
+
     def next(now, chan = 0)
       return @last if @now == now
       @now = now
-      
+
       return @last unless @loaded && @playing
-      
+
       offset = @sample.to_i * @block_align
       chan_offset = chan * @bits_per_sample
-      
+
       if offset + @block_align > @wav.size
         @playing = false
         return @last
       end
-      
+
       @last = @wav[offset + chan_offset, @bits_per_sample].unpack("s1").first / @range
       @sample += rate
       @last
     end
-    
+
     def play; @playing = true; end
     def stop; @playing = false; end
-    
+
     def reset
       @offset = 0
     end
-    
+
   end
 
 end
