@@ -60,7 +60,7 @@ module Ruck
       self
     end
 
-    def chan(num)
+    def in(num)
       @channels[num]
     end
 

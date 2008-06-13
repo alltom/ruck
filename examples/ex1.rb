@@ -1,5 +1,5 @@
 def beep(wav, chan)
-  (s = SawOsc.new(:freq => 440, :gain => 0.25)) >> wav.chan(chan)
+  (s = SawOsc.new(:freq => 440, :gain => 0.25)) >> wav.in(chan)
   10.times do
     play 0.1.seconds
     s.freq *= 1.2
