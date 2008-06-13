@@ -14,7 +14,6 @@ module Ruck
       require_attrs attrs, [:filename]
       @filename = attrs.delete(:filename)
       parse_attrs attrs
-      @now = 0
       @sample_rate = SAMPLE_RATE
       @bits_per_sample = BITS_PER_SAMPLE
       @channels = CHANNELS
@@ -100,7 +99,6 @@ module Ruck
       @filename = attrs.delete(:filename)
       parse_attrs attrs
       
-      @now = 0
       @sample = 0.0
       @samples = []
       @ins = []

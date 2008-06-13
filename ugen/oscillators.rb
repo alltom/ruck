@@ -27,7 +27,6 @@ module Ruck
     def initialize(attrs = {})
       parse_attrs({ :freq => 440.0,
                     :gain => 1.0 }.merge(attrs))
-      @now = 0
       @phase = 0.0
       @last = 0.0
     end
@@ -54,7 +53,6 @@ module Ruck
     def initialize(attrs = {})
       parse_attrs({ :freq => 440.0,
                     :gain => 1.0 }.merge(attrs))
-      @now = 0
       @phase = 0.0
       @last = 0.0
     end
@@ -81,7 +79,6 @@ module Ruck
     def initialize(attrs = {})
       parse_attrs({ :freq => 440.0,
                     :gain => 1.0 }.merge(attrs))
-      @now = 0
       @phase = 0.0
       @last = 0.0
     end

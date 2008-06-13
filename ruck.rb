@@ -6,13 +6,13 @@ module Ruck
   BITS_PER_SAMPLE = 16
   
   def dac
-    @@dac ||= Gain.new
+    @@dac ||= DAC.new :num_channels => 1
   end
   
   def blackhole
     return @@blackhole if defined? @@blackhole
     
-    @@blackhole = Gain.new(:gain => 0.0)
+    @@blackhole = Bus.new
     @@blackhole >> dac
     @@blackhole
   end

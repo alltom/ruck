@@ -76,7 +76,7 @@ module Ruck
 
       # simulate samples up to furthest behind shred
       (min_now - @now).times do
-        @dac.next(@now)
+        @dac.channels.each { |chan| chan.next @now }
         @now += 1
       end
 
