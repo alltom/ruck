@@ -94,6 +94,7 @@ module Ruck
     include MultiChannelSource
 
     linkable_attr :rate
+    linkable_attr :gain
     attr_reader :filename
 
     def initialize(attrs = {})
@@ -163,7 +164,7 @@ module Ruck
         return @last[chan]
       end
 
-      @last[chan] = @wav[offset + chan_offset, @bits_per_sample].unpack("s1").first / @range
+      @last[chan] = @wav[offset + chan_offset, @bits_per_sample].unpack("s1").first / @range * gain
       @sample[chan] += rate * @rate_adjust
       @last[chan]
     end
