@@ -73,10 +73,11 @@ module Ruck
     def sim
       min = @shreds.min # furthest behind (Shred#<=> uses Shred's current time)
       min_now = min.now
+      bh = blackhole
 
       # simulate samples up to furthest behind shred
       (min_now - @now).times do
-        blackhole.next @now
+        bh.next @now
         @now += 1
       end
 
