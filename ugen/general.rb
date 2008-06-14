@@ -176,6 +176,8 @@ module Ruck
     include UGen
     include Target
     include Source
+    
+    linkable_attr :gain
 
     def initialize(attrs = {})
       require_attrs attrs, [:time]
@@ -190,7 +192,7 @@ module Ruck
       return @last if @now == now
       @now = now
 
-      @queue << @ins.inject(0) { |samp, ugen| samp += ugen.next(now) }
+      @queue << @ins.inject(0) { |samp, ugen| samp += ugen.next(now) } * gain
       @last = @queue.shift
     end
 
