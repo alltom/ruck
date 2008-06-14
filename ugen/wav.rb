@@ -155,11 +155,9 @@ module Ruck
       return @last[chan] unless @loaded && @playing
 
       offset = @sample[chan].to_i * @block_align
-      chan_offset = chan * @bits_per_sample
+      chan_offset = (chan * @bits_per_sample) / 8
 
       if offset + @block_align > @wav.size
-        puts "#{offset} + #{@block_align} > #{@wav.size}"
-        p @wav
         @playing = false
         return @last[chan]
       end
