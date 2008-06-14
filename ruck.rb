@@ -8,7 +8,7 @@ module Ruck
   BITS_PER_SAMPLE = 16
 
   def blackhole
-    @@blackhole ||= Bus.new
+    @@blackhole ||= InChannel.new
   end
   
   def now

@@ -51,25 +51,17 @@ module Ruck
 
   module MultiChannelTarget
     def add_source(ugen)
-      @channels.each { |chan| chan.add_source ugen }
+      @in_channels.each { |chan| chan.add_source ugen }
       self
     end
 
     def remove_source(ugen)
-      @channels.each { |chan| chan.remove_source ugen }
+      @in_channels.each { |chan| chan.remove_source ugen }
       self
     end
 
-    def in(num)
-      @channels[num]
-    end
-
-    def channels
-      @channels.dup
-    end
-
-    def num_channels
-      @channels.length
+    def in(chan)
+      @in_channels[chan]
     end
   end
 
@@ -82,13 +74,25 @@ module Ruck
       ugen.remove_source self
     end
 
+    def out(chan)
+      @self if chan == 0
+    end
+
     def next(now); @last; end
     def last; @last; end
   end
 
-  class Bus
+  module MultiChannelSource
+    def out(chan)
+      @out_channels[chan]
+    end
+
+    def next(now, chan = 0); @last[chan]; end
+    def last(chan = 0); @last[chan]; end
+  end
+
+  class InChannel
     include UGen
-    include Source
     include Target
 
     def initialize(attrs = {})
@@ -108,19 +112,17 @@ module Ruck
     end
   end
 
-  class DAC
-    include UGen
-    include MultiChannelTarget
+  class OutChannel
+    include Source
 
-    def initialize(attrs = {})
-      require_attrs attrs, [:num_channels]
-      num_channels = attrs.delete(:num_channels)
-      parse_attrs attrs
-      @channels = (1..num_channels).map { Bus.new }
+    def initialize(parent, channel_number)
+      @parent = parent
+      @channel_number = channel_number
     end
 
-    def attr_names
-      [:num_channels]
+    def next(now)
+      return @last if @now == now
+      @last = @parent.next(now, @channel_number)
     end
   end
 

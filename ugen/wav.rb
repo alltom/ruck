@@ -16,7 +16,7 @@ module Ruck
       @num_channels = attrs.delete(:num_channels) || 1
       parse_attrs attrs
 
-      @channels = (1..@num_channels).map { Bus.new }
+      @in_channels = (1..@num_channels).map { InChannel.new }
 
       @sample_rate = SAMPLE_RATE
       @bits_per_sample = BITS_PER_SAMPLE
@@ -30,7 +30,7 @@ module Ruck
     def next(now)
       return @last if @now == now
       @now = now
-      @samples << @channels.map { |chan| chan.next now }
+      @samples << @in_channels.map { |chan| chan.next now }
       @last
     end
 
@@ -87,11 +87,11 @@ module Ruck
 
   # plays sound stored in a RIFF WAV file
   # bugs:
-  # - assumes sample rate matches ours
+  # - assumes sample rate matches ours (adjust manually by setting :rate)
   # - no way to chuck any channel but the first
   class WavIn
     include UGen
-    include Source
+    include MultiChannelSource
 
     linkable_attr :rate
     attr_reader :filename
@@ -101,10 +101,6 @@ module Ruck
       @filename = attrs.delete(:filename)
       parse_attrs attrs
 
-      @sample = 0.0
-      @samples = []
-      @ins = []
-      @last = 0.0
       @rate = 1.0
       @loaded = false
       @playing = true
@@ -124,7 +120,8 @@ module Ruck
       end
 
       riff.data_skip = 4 # skip "WAVE"
-      fmt, @wav = riff.chunks
+      fmt = riff.chunks.first
+      @wav = riff.chunks.find { |c| c.type == "data" }
       unless fmt[0..1].unpack("s1").first == 1
         LOG.error "#{@filename}: Not PCM!"
         return
@@ -134,6 +131,11 @@ module Ruck
         @block_align, @bits_per_sample =
         fmt[2..15].unpack("s1i1i1s1s1")
       @range = (2 ** (@bits_per_sample - 1)).to_f
+
+      @out_channels = (0..@num_channels-1).map { |chan| OutChannel.new self, chan }
+      @sample = [0.0] * @num_channels
+      @last = [0.0] * @num_channels
+      @now = [nil] * @num_channels
 
       @loaded = true
     end
@@ -147,22 +149,24 @@ module Ruck
     end
 
     def next(now, chan = 0)
-      return @last if @now == now
-      @now = now
+      return @last[chan] if @now[chan] == now
+      @now[chan] = now
 
-      return @last unless @loaded && @playing
+      return @last[chan] unless @loaded && @playing
 
-      offset = @sample.to_i * @block_align
+      offset = @sample[chan].to_i * @block_align
       chan_offset = chan * @bits_per_sample
 
       if offset + @block_align > @wav.size
+        puts "#{offset} + #{@block_align} > #{@wav.size}"
+        p @wav
         @playing = false
-        return @last
+        return @last[chan]
       end
 
-      @last = @wav[offset + chan_offset, @bits_per_sample].unpack("s1").first / @range
-      @sample += rate
-      @last
+      @last[chan] = @wav[offset + chan_offset, @bits_per_sample].unpack("s1").first / @range
+      @sample[chan] += rate
+      @last[chan]
     end
 
     def play; @playing = true; end
