@@ -136,12 +136,13 @@ module Ruck
       @sample = [0.0] * @num_channels
       @last = [0.0] * @num_channels
       @now = [nil] * @num_channels
+      @rate_adjust = @sample_rate / SAMPLE_RATE
 
       @loaded = true
     end
 
     def duration
-      @loaded ? @wav.size / @block_align : 0
+      @loaded ? @wav.size / @block_align / @rate_adjust : 0
     end
 
     def attr_names
@@ -163,7 +164,7 @@ module Ruck
       end
 
       @last[chan] = @wav[offset + chan_offset, @bits_per_sample].unpack("s1").first / @range
-      @sample[chan] += rate
+      @sample[chan] += rate * @rate_adjust
       @last[chan]
     end
 
