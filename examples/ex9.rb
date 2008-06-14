@@ -17,7 +17,7 @@ inverted_left = Step.new :value => L{ -delayed_left.next(now) }
 inverted_right = Step.new :value => L{ -delayed_right.next(now) }
 
 wavout >> blackhole
-[wavin.out(0) >> Gain.new(:gain => 1.0 - gain), inverted_right] >> wavout.in(0)
-[wavin.out(1) >> Gain.new(:gain => 1.0 - gain), inverted_left ] >> wavout.in(1)
+[wavin.out(0) * (1.0 - gain), inverted_right] >> wavout.in(0)
+[wavin.out(1) * (1.0 - gain), inverted_left ] >> wavout.in(1)
 
 play wavin.duration

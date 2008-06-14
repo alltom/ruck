@@ -78,6 +78,12 @@ module Ruck
       @self if chan == 0
     end
 
+    def *(other)
+      g = Gain.new :gain => other
+      self >> g
+      g
+    end
+
     def next(now); @last; end
     def last; @last; end
   end
@@ -176,7 +182,7 @@ module Ruck
     include UGen
     include Target
     include Source
-    
+
     linkable_attr :gain
 
     def initialize(attrs = {})
