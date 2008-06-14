@@ -6,16 +6,16 @@ https://lists.cs.princeton.edu/pipermail/chuck-users/2008-May/002983.html
 > feed the right channel back to the left with a short delay, inverted;
 =end
 
-# Well, we don't have stereo output yet
-# But let's keep this around until ruck catches up
+wavin = WavIn.new :filename => "widening.wav", :rate => 2.0
+wavout = WavOut.new :filename => "ex9.wav", :num_channels => 2
 
-wav = WavOut.new(:filename => "ex9.wav", :num_channels => 2)
-s = SinOsc.new(:freq => 440, :gain => 0.5)
+delayed_left = Delay.new(:time => 10.ms)
+delayed_right = Delay.new(:time => 10.ms)
+inverted_left = Step.new :value => L{ -delayed_right.next(now) }
+inverted_right = Step.new :value => L{ -delayed_left.next(now) }
 
-delayed = Delay.new(:time => 1.sample)
-inverted = Step.new :value => L{ -delayed.next(now) }
-
-[s, inverted] >> wav >> blackhole
-s >> delayed >> blackhole
+wavout >> blackhole
+[wavin.out(0), inverted_right] >> wavout.in(0)
+[wavin.out(1), inverted_left] >> wavout.in(1)
 
 play 3.seconds
