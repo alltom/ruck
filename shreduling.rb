@@ -25,7 +25,6 @@ module Ruck
 
     def yield(samples)
       samples = samples.to_i
-      samples = 0 if samples < 0
       @now += samples
       callcc do |cont|
         @block = cont # save where we are
@@ -65,6 +64,7 @@ module Ruck
     end
 
     def remove_shred(shred)
+      LOG.debug "Removing shred \"#{name}\" at #{@now}"
       @shreds.delete shred
     end
 
@@ -72,11 +72,10 @@ module Ruck
     #   on all UGens connected to the blackhole (and later, DAC)
     def sim
       min = @shreds.min # furthest behind (Shred#<=> uses Shred's current time)
-      min_now = min.now
       bh = blackhole
 
       # simulate samples up to furthest behind shred
-      (min_now - @now).times do
+      (min.now - @now).times do
         bh.next @now
         @now += 1
       end
