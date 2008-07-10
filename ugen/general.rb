@@ -2,6 +2,17 @@
 module Ruck
 
   module UGen
+
+    def to_s
+      "<#{self.class}" +
+        (name ? "(#{name})" : "") +
+        " #{attr_names.map { |a| "#{a}:#{send a}" }.join " "}>"
+    end
+
+    attr_accessor :name
+
+  protected
+
     def require_attrs(attrs, names)
       names.each do |name|
         unless attrs.has_key? name
@@ -20,13 +31,6 @@ module Ruck
       names.map { |name| attrs.delete(name) }
     end
 
-    def to_s
-      "<#{self.class}" +
-        (name ? "(#{name})" : "") +
-        " #{attr_names.map { |a| "#{a}:#{send a}" }.join " "}>"
-    end
-
-    attr_accessor :name
   end
 
   module Target
