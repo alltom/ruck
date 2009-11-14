@@ -6,16 +6,16 @@ module RuckTime
   alias_method :samples, :sample
   
   def ms
-    self * Ruck::SAMPLE_RATE / 1000.0
+    self * SAMPLE_RATE / 1000.0
   end
   
   def second
-    self * Ruck::SAMPLE_RATE
+    self * SAMPLE_RATE
   end
   alias_method :seconds, :second
   
   def minute
-    self * Ruck::SAMPLE_RATE * 60.0
+    self * SAMPLE_RATE * 60.0
   end
   alias_method :minutes, :minute
 end

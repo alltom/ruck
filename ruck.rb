@@ -2,13 +2,11 @@ require "logger"
 
 LOG = Logger.new(STDOUT)
 
-module Ruck
-
-  SAMPLE_RATE = 22050
-  BITS_PER_SAMPLE = 16
+# stuff accessible in a shred
+module ShredLocal
 
   def blackhole
-    @@blackhole ||= InChannel.new
+    @@blackhole ||= Ruck::InChannel.new
   end
   
   def now
@@ -22,7 +20,7 @@ module Ruck
   end
 
   def spork(name = "unnamed", &shred)
-    @shreduler ||= Shreduler.new
+    @shreduler ||= Ruck::Shreduler.new
     @shreduler.spork(name, &shred)
   end
 
@@ -51,7 +49,9 @@ require File.join(File.dirname(__FILE__), "ugen", "oscillators")
 
 if __FILE__ == $0
 
-  include Ruck
+  include ShredLocal
+  
+  SAMPLE_RATE = 22050
 
   LOG.level = Logger::WARN
 

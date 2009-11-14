@@ -14,12 +14,12 @@ module Ruck
       require_attrs attrs, [:filename]
       @filename = attrs.delete(:filename)
       @num_channels = attrs.delete(:num_channels) || 1
+      @bits_per_sample = attrs.delete(:bits_per_sample) || 16
       parse_attrs attrs
 
       @in_channels = (1..@num_channels).map { InChannel.new }
 
       @sample_rate = SAMPLE_RATE
-      @bits_per_sample = BITS_PER_SAMPLE
       @samples = (1..@num_channels).map { [] }
       @ins = []
       @last = 0.0
@@ -57,7 +57,7 @@ module Ruck
             fmt << short(@bits_per_sample) # bits/sample
           end
           riff << chunk("data") do |data|
-            range = 2 ** (BITS_PER_SAMPLE - 1)
+            range = 2 ** (@bits_per_sample - 1)
             @samples.each do |sample_list|
               sample_list.each { |sample| data << [sample * range].pack("s1") }
             end
