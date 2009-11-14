@@ -17,8 +17,9 @@ play 1.second
 
 spork("beep") { beep(wav, 0) }
 
-play 0.5.seconds
-
-spork("beep") { beep(wav, 1) }
+10.times do
+  play 0.5.seconds
+  spork("beep") { beep(wav, 1) }
+end
 
 3.times { play 1.seconds }
