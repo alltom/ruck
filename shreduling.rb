@@ -50,6 +50,7 @@ module Ruck
   class Shreduler
     attr_reader :running
     attr_reader :current_shred
+    attr_reader :shreds
     attr_reader :now
 
     def initialize

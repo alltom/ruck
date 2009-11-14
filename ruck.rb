@@ -6,31 +6,24 @@ LOG = Logger.new(STDOUT)
 module ShredLocal
 
   def blackhole
-    @@blackhole ||= Ruck::InChannel.new
+    BLACKHOLE
   end
   
   def now
-    @shreduler.now
-  end
-
-  def run
-    @shreduler ||= Shreduler.new
-    log.error("Ruck already running") and return if @shreduler.running
-    @shreduler.run
+    SHREDULER.now
   end
 
   def spork(name = "unnamed", &shred)
-    @shreduler ||= Ruck::Shreduler.new
-    @shreduler.spork(name, &shred)
+    SHREDULER.spork(name, &shred)
   end
 
   def play(samples)
-    @shreduler.current_shred.yield(samples)
+    SHREDULER.current_shred.yield(samples)
   end
 
   def finish
-    shred = @shreduler.current_shred
-    @shreduler.remove_shred shred
+    shred = SHREDULER.current_shred
+    SHREDULER.remove_shred shred
     shred.finish
   end
 
@@ -50,8 +43,11 @@ require File.join(File.dirname(__FILE__), "ugen", "oscillators")
 if __FILE__ == $0
 
   include ShredLocal
+  include Ruck::Generators
   
   SAMPLE_RATE = 22050
+  SHREDULER = Ruck::Shreduler.new
+  BLACKHOLE = Ruck::InChannel.new
 
   LOG.level = Logger::WARN
 
@@ -64,6 +60,6 @@ if __FILE__ == $0
   end
 
   filenames.each { |filename| spork("main") { require filename } }
-  run
+  SHREDULER.run
 
 end
