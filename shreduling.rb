@@ -24,7 +24,7 @@ module Ruck
     end
 
     def yield(samples)
-      samples = samples.to_i
+      samples = samples
       @now += samples
       callcc do |cont|
         @block = cont # save where we are
