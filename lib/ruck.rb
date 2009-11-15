@@ -5,9 +5,9 @@ module Ruck
   LOG.level = Logger::WARN
 end
 
-require File.join(File.dirname(__FILE__), "shreduling")
-require File.join(File.dirname(__FILE__), "misc", "metaid")
-require File.join(File.dirname(__FILE__), "misc", "linkage")
-require File.join(File.dirname(__FILE__), "ugen", "general")
-require File.join(File.dirname(__FILE__), "ugen", "wav")
-require File.join(File.dirname(__FILE__), "ugen", "oscillators")
+require File.join(File.dirname(__FILE__), "ruck", "shreduling")
+require File.join(File.dirname(__FILE__), "ruck", "misc", "metaid")
+require File.join(File.dirname(__FILE__), "ruck", "misc", "linkage")
+require File.join(File.dirname(__FILE__), "ruck", "ugen", "general")
+require File.join(File.dirname(__FILE__), "ruck", "ugen", "wav")
+require File.join(File.dirname(__FILE__), "ruck", "ugen", "oscillators")
