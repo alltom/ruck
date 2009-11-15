@@ -16,7 +16,7 @@ module Ruck
     def go(resume)
       @resume = resume
       begin
-        @block.call
+        @block.call self
       rescue => e
         LOG.error "#{self} exited uncleanly:\n#{e}\n#{e.backtrace}"
       end
@@ -59,9 +59,10 @@ module Ruck
       @running = false
     end
 
-    def spork(name, &shred)
+    def spork(name = "", &shred)
       LOG.debug "Adding shred \"#{name}\" at #{@now}"
       @shreds << Shred.new(self, @now, name, &shred)
+      @shred
     end
 
     def remove_shred(shred)
