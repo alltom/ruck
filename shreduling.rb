@@ -102,6 +102,11 @@ module Ruck
   end
   
   class UGenShreduler < Shreduler
+    def run
+      require File.join(File.dirname(__FILE__), "misc", "time")
+      super
+    end
+    
     def sim_to(new_now)
       while @now < new_now.to_i
         BLACKHOLE.next @now
