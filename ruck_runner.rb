@@ -30,7 +30,7 @@ end
 
 
 SAMPLE_RATE = 22050
-SHREDULER = Ruck::RealTimeShreduler.new
+SHREDULER = Ruck::UGenShreduler.new
 BLACKHOLE = Ruck::InChannel.new
 
 filenames = ARGV
