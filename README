@@ -1,38 +1,73 @@
-A port of ChucK to Ruby!
-Do things you'd do in ChucK in Ruby!
-A very, very minor subset of such things
+A port of ChucK's strong timing to Ruby!
 
-Work in Progress:
-- No live speaker output
-- Very, very few UGens, and no UAnas
-- Probably not stable (but the examples work!)
+Use Ruck's "shreds" to coordinate interleaved execution
+of threads (continuations) with precise virtual timing.
+Actual run-time is abstracted and shreds declare how much
+virtual time they took to execute. Scheduling of shreds
+is done by a ...
 
-But there's WAV output! (woot)
+  SHREDULER
 
-TODO:
-- Add Events
-- Live audio (see audio/)
-- Multi-channel support on WavOut (and then dac)
-- Compressor, limiter
+UGenShreduler:
 
-Comparison
-==========
+  This shreduler calculates an audio unit generator graph's
+  output in virtual time. The graph can be modified by
+  shreds all the while.
 
-  ChucK:
+  The graph is written in Ruby for flexibility, so it's
+  too slow (on my computer) for real time, so there is no
+  real-time playback. You can use WavOut, though.
+  (See ex01.rb)
 
-    SinOsc s => dac;
-    5::second => now;
-    
-    // run "chuck script.ck"
-    // then listen to your speakers
+  Check out the library of built-in unit generators in ugen/
+  and make your own.
 
-  Ruck:
+  Unit Generator Usage
+  ====================
 
-    SinOsc.new(440) >> WavOut.new("out.wav") >> blackhole
-    play 5.seconds
-    
-    # run "ruby ruck.rb script.rb"
-    # then listen to out.wav when it's done
+  Play a sine wave (ex02.rb):
 
-... there's obviously a lot of work to do ...
-       ... isn't programming fun?!
+    s = SinOsc.new(:freq => 440)
+    w = WavOut.new(:filename => "ex02.wav")
+    s >> w >> blackhole
+    play 3.seconds
+
+  Attach lambdas to unit generator attributes (ex03.rb):
+
+    wav = WavOut.new(:filename => "ex03.wav")
+    sin2 = SinOsc.new(:freq => 3)
+    sin = SinOsc.new(:freq => L{ sin2.last * 220 + 660 },
+                     :gain => L{ 0.5 + sin2.last * 0.5 })
+    [sin >> wav, sin2] >> blackhole
+    play 3.seconds
+
+
+RealTimeShreduler
+
+  This shreduler attempts to keep virtual time in line with
+  real time.
+  (See ex10.rb)
+
+USAGE
+=====
+
+ruck_runner.rb is an (example) program that lets you run scripts
+as you do with ChucK:
+
+  $ ruby ruck_runner.rb examples/ex01.rb
+
+It uses a UGenShreduler with a fixed sample rate. You can use it
+as an example for how to embed your own shreduler. It boils down
+to this:
+
+  require "ruck"
+  
+  @shreduler = Ruck::RealTimeShreduler.new
+  
+  # repeat this part as necessary to seed @shreduler with shreds
+  @shreduler.spork("main") do
+    ...
+  end
+  
+  # this returns when no shreds remain
+  @shreduler.run
