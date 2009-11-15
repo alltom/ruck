@@ -127,7 +127,7 @@ module Ruck
       
       actual_now = Time.now
       simulated_now = @start_time + (new_now.to_f / SAMPLE_RATE)
-      puts "drift: #{simulated_now - actual_now}"
+      # puts "drift: #{simulated_now - actual_now}"
     end
   end
 
