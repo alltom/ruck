@@ -101,8 +101,7 @@ module Ruck
   
   class UGenShreduler < Shreduler
     def sim_to(new_now)
-      # simulate samples up to furthest behind shred
-      # BUG: if all time steps are fractional samples, will this loop ever run?
+      # BUG: this doesn't account for fractional samples very well
       (new_now - @now).times do
         BLACKHOLE.next @now
         @now += 1
@@ -112,10 +111,23 @@ module Ruck
   
   # TODO: gets out of sync with wall clock too easily
   class RealTimeShreduler < Shreduler
+    def run
+      @start_time = Time.now
+      super
+    end
+    
     def sim_to(new_now)
-      samples_to_simulate = new_now - @now
-      sleep(samples_to_simulate.to_f / SAMPLE_RATE)
-      @now += samples_to_simulate
+      actual_now = Time.now
+      simulated_now = @start_time + (new_now.to_f / SAMPLE_RATE)
+      if simulated_now > actual_now
+        sleep(simulated_now - actual_now)
+      end
+      
+      @now = new_now
+      
+      actual_now = Time.now
+      simulated_now = @start_time + (new_now.to_f / SAMPLE_RATE)
+      puts "drift: #{simulated_now - actual_now}"
     end
   end
 
