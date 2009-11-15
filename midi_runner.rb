@@ -107,7 +107,7 @@ module ShredLocal
   end
   
   def note_on(note, velocity = 127, channel = 0, track = 0)
-    TRACKS[track].events << MIDI::NoteOnEvent.new(channel, note, velocity, TRACK_DELTAS[track])
+    TRACKS[track].events << MIDI::NoteOnEvent.new(channel, note, velocity, TRACK_DELTAS[track].to_i)
     TRACK_DELTAS[track] = 0
     if ALSO_LIVE
       MIDI_PLAYER.driver.note_on(note, channel, velocity)
@@ -115,7 +115,7 @@ module ShredLocal
   end
   
   def note_off(note, channel = 0, track = 0)
-    TRACKS[track].events << MIDI::NoteOffEvent.new(channel, note, 0, TRACK_DELTAS[track])
+    TRACKS[track].events << MIDI::NoteOffEvent.new(channel, note, 0, TRACK_DELTAS[track].to_i)
     TRACK_DELTAS[track] = 0
     if ALSO_LIVE
       MIDI_PLAYER.driver.note_on(note, channel, 0)
