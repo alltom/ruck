@@ -7,7 +7,7 @@ require "midiator"
 
 # configuration
 if ARGV.length < 4
-  puts "ruby midilib_runner.rb MIDI_FILENAME NUM_TRACKS LIVE FILENAMES [...]"
+  puts "ruby midilib_runner.rb MIDI_FILENAME NUM_TRACKS LIVE SCRIPT_FILENAME [...]"
   exit 1
 end
 
