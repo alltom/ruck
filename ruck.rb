@@ -1,5 +1,6 @@
-require "logger"
 
+#  used throughout ruck libraries
+require "logger"
 LOG = Logger.new(STDOUT)
 
 # stuff accessible in a shred
@@ -42,11 +43,8 @@ require File.join(File.dirname(__FILE__), "ugen", "oscillators")
 
 if __FILE__ == $0
 
-  include ShredLocal
-  include Ruck::Generators
-  
   SAMPLE_RATE = 22050
-  SHREDULER = Ruck::UGenShreduler.new
+  SHREDULER = Ruck::RealTimeShreduler.new
   BLACKHOLE = Ruck::InChannel.new
 
   LOG.level = Logger::WARN
@@ -59,7 +57,13 @@ if __FILE__ == $0
     end
   end
 
-  filenames.each { |filename| spork("main") { require filename } }
+  filenames.each do |filename|
+    SHREDULER.spork(filename) do
+      include ShredLocal
+      include Ruck::Generators
+      require filename
+    end
+  end
   SHREDULER.run
 
 end
