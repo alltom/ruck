@@ -103,8 +103,7 @@ module Ruck
   
   class UGenShreduler < Shreduler
     def sim_to(new_now)
-      # BUG: this doesn't account for fractional samples very well
-      (new_now - @now).times do
+      while @now < new_now.to_i
         BLACKHOLE.next @now
         @now += 1
       end
@@ -125,10 +124,6 @@ module Ruck
       end
       
       @now = new_now
-      
-      actual_now = Time.now
-      simulated_now = @start_time + (new_now.to_f / SAMPLE_RATE)
-      # puts "drift: #{simulated_now - actual_now}"
     end
   end
 
