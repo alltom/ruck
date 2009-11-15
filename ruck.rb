@@ -44,7 +44,7 @@ require File.join(File.dirname(__FILE__), "ugen", "oscillators")
 if __FILE__ == $0
 
   SAMPLE_RATE = 22050
-  SHREDULER = Ruck::RealTimeShreduler.new
+  SHREDULER = Ruck::UGenShreduler.new
   BLACKHOLE = Ruck::InChannel.new
 
   LOG.level = Logger::WARN
