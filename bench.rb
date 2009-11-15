@@ -1,4 +1,6 @@
 
+SAMPLE_RATE = 44100
+
 if ARGV.include? "bench.rb"
   # benchmark UGens with shreduling
 
@@ -26,11 +28,11 @@ else
   @now = 0
   puts "Simulating #{TIME / 1.second} seconds"
   loop do
-    Ruck::Step.new >> dac
+    Ruck::Generators::Step.new >> dac
     count += 1
 
     start = Time.now
-    TIME.times do
+    TIME.to_i.times do
       dac.next(@now)
       @now += 1
     end
