@@ -13,5 +13,3 @@ spork("b") do
     puts "       half-second"
   end
 end
-
-while play 1.minute; end

@@ -40,6 +40,7 @@ module Ruck
       else
         @ins << ugen
       end
+      
       self
     end
 
@@ -49,19 +50,47 @@ module Ruck
       else
         @ins.delete(ugen)
       end
+      
       self
     end
   end
 
   module MultiChannelTarget
     def add_source(ugen)
-      @in_channels.each { |chan| chan.add_source ugen }
+      if ugen.is_a? Array
+        ugen.each { |u| add_source u }
+        return self
+      end
+      
+      if ugen.out_channels.length == 1
+        @in_channels.each { |chan| chan.add_source ugen.out(0) }
+      else
+        1.upto([ugen.out_channels.length, @in_channels.length].min) do |i|
+          @in_channels[i-1].add_source ugen.out(i-1)
+        end
+      end
+      
       self
     end
 
     def remove_source(ugen)
-      @in_channels.each { |chan| chan.remove_source ugen }
+      if ugen.is_a? Array
+        ugen.each { |u| remove_source u }
+        return
+      end
+      
+      # remove all outputs of ugen from all inputs of self
+      @in_channels.each do |in_chan|
+        ugen.out_channels.each do |out_chan|
+          in_chan.remove_source out_chan
+        end
+      end
+      
       self
+    end
+    
+    def in_channels
+      @in_channels
     end
 
     def in(chan)
@@ -77,9 +106,13 @@ module Ruck
     def <<(ugen)
       ugen.remove_source self
     end
+    
+    def out_channels
+      [self]
+    end
 
     def out(chan)
-      @self if chan == 0
+      self if chan == 0
     end
 
     def next(now); @last; end
@@ -87,6 +120,18 @@ module Ruck
   end
 
   module MultiChannelSource
+    def >>(ugen)
+      ugen.add_source self
+    end
+
+    def <<(ugen)
+      ugen.remove_source self
+    end
+    
+    def out_channels
+      @out_channels
+    end
+    
     def out(chan)
       @out_channels[chan]
     end

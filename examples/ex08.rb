@@ -4,7 +4,7 @@
 wav = WavOut.new(:filename => "ex08.wav")
 ramps = (1..4).map { Ramp.new(:duration => 50.ms) }
 oscillators = (1..4).map { SinOsc.new }
-[[oscillators] >> wav, ramps] >> blackhole
+[oscillators >> wav, ramps] >> blackhole
 
 (0..3).each { |i| oscillators[i].freq = L{ ramps[i].last } }
 

@@ -13,13 +13,12 @@ SinOsc.new(:freq => 880, :gain => 0.25) >> wav
 
 wav >> blackhole
 
-play 1.second
-
-spork("beep") { beep(wav, 0) }
+chan = 0
 
 10.times do
-  play 0.5.seconds
-  spork("beep") { beep(wav, 1) }
+  play 0.7.seconds
+  chan = (chan + 1) % 2
+  spork("beep") { beep(wav, chan) }
 end
 
-3.times { play 1.seconds }
+play 2.seconds

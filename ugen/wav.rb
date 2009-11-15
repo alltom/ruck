@@ -91,9 +91,6 @@ module Ruck
     end
 
     # plays sound stored in a RIFF WAV file
-    # bugs:
-    # - assumes sample rate matches ours (adjust manually by setting :rate)
-    # - no way to chuck any channel but the first
     class WavIn
       include UGen
       include MultiChannelSource
@@ -104,10 +101,11 @@ module Ruck
 
       def initialize(attrs = {})
         require_attrs attrs, [:filename]
+        @rate = 1.0
+        @gain = 1.0
         @filename = attrs.delete(:filename)
         parse_attrs attrs
 
-        @rate = 1.0
         @loaded = false
         @playing = true
 
