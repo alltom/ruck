@@ -15,7 +15,7 @@ end
 
 MIDI_FILENAME = ARGV[0]
 NUM_TRACKS = ARGV[1].to_i
-ALSO_LIVE = ["yes", "true", "1"].include? ARGV[2].downcase
+ALSO_LIVE = ["yes", "true", "1", "yeah"].include? ARGV[2].downcase
 FILENAMES = ARGV[3..-1]
 
 class MIDIShreduler < Ruck::Shreduler
