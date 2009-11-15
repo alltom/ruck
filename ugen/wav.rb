@@ -27,6 +27,8 @@ module Ruck
         @ins = []
         @last = 0.0
 
+        # TODO: this is necessary, but if UGen graph were explicitly
+        # destructed, that would be nice.
         at_exit { save }
       end
 
