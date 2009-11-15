@@ -1,6 +1,10 @@
 #!/usr/bin/env ruby
 $:.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 
+# requires glapp gem
+# sudo gem install alltom-glapp
+# see http://alltom.com/pages/glapp for more details
+
 require "ruck"
 
 require "rubygems"
