@@ -1,5 +1,5 @@
 wav = WavIn.new(:filename => "ex1.wav")
-wav >> WavOut.new(:filename => "ex5.wav") >> blackhole
+wav >> WavOut.new(:filename => "ex05.wav") >> blackhole
 
 wav.stop; play 0.5.seconds            # silence
 wav.play; play 1.second     # play first second

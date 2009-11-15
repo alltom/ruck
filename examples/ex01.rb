@@ -7,7 +7,7 @@ def beep(wav, chan)
   s << wav
 end
 
-wav = WavOut.new(:filename => "ex1.wav", :num_channels => 2)
+wav = WavOut.new(:filename => "ex01.wav", :num_channels => 2)
 SinOsc.new(:freq => 440, :gain => 0.25) >> wav
 SinOsc.new(:freq => 880, :gain => 0.25) >> wav
 

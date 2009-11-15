@@ -1,7 +1,7 @@
 @bpm = 130.0
 @one_beat = (1.0 / @bpm).minutes
 
-(@wav = WavOut.new(:filename => "ex7.wav")) >> blackhole
+(@wav = WavOut.new(:filename => "ex07.wav")) >> blackhole
 
 def smash(len = @one_beat)
   (n = Noise.new(:gain => 0.4)) >> (a = ADSR.new) >> @wav

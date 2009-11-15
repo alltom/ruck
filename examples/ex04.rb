@@ -1,4 +1,4 @@
-(wav = WavOut.new(:filename => "ex4.wav")) >> blackhole
+(wav = WavOut.new(:filename => "ex04.wav")) >> blackhole
 s = SawOsc.new(:freq => 440, :gain => 0.5)
 adsr = ADSR.new(:attack_time => 50.ms,
                 :attack_gain => 1.0,

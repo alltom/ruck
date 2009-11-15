@@ -1,3 +1,5 @@
+# run ex01.rb first (or, preferably, use way better input than ex01.wav)
+
 =begin
 https://lists.cs.princeton.edu/pipermail/chuck-users/2008-May/002983.html
 
@@ -8,8 +10,8 @@ https://lists.cs.princeton.edu/pipermail/chuck-users/2008-May/002983.html
 
 mix = 0.5
 
-wavin = WavIn.new :filename => "ex1.wav", :gain => (1.0 - mix)
-wavout = WavOut.new :filename => "ex9.wav", :num_channels => 2
+wavin = WavIn.new :filename => "ex01.wav", :gain => (1.0 - mix)
+wavout = WavOut.new :filename => "ex09.wav", :num_channels => 2
 
 wavin.out(0) >> (delayed_left =  Delay.new :time => 10.ms, :gain => mix)
 wavin.out(1) >> (delayed_right = Delay.new :time => 10.ms, :gain => mix)

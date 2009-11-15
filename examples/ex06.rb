@@ -1,5 +1,7 @@
-spoken = WavIn.new(:filename => "ex1.wav")
-wav = WavOut.new(:filename => "ex6.wav")
+# run ex01.rb first
+
+spoken = WavIn.new(:filename => "ex01.wav")
+wav = WavOut.new(:filename => "ex06.wav")
 spoken >> wav >> blackhole
 
 (sin = SinOsc.new(:freq => 3, :gain => 0.1)) >> blackhole

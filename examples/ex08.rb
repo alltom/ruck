@@ -1,7 +1,7 @@
 # An experiment with formants
 # http://en.wikipedia.org/wiki/Formant
 
-wav = WavOut.new(:filename => "ex8.wav")
+wav = WavOut.new(:filename => "ex08.wav")
 ramps = (1..4).map { Ramp.new(:duration => 50.ms) }
 oscillators = (1..4).map { SinOsc.new }
 [[oscillators] >> wav, ramps] >> blackhole
