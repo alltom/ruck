@@ -24,6 +24,7 @@ module Ruck
     end
 
     def yield(samples)
+      LOG.debug "shred #{self} yielding #{samples}"
       samples = samples
       @now += samples
       callcc do |cont|
@@ -75,6 +76,23 @@ module Ruck
     def sim_to(new_now)
       @now = new_now
     end
+    
+    # invokes the next shred, simulates to the new VM time, then returns
+    def run_one
+      @current_shred = @shreds.min # furthest behind (Shred#<=> uses Shred's current time)
+      
+      sim_to(@current_shred.now)
+      
+      # execute shred, saving this as the resume point
+      LOG.debug "resuming shred #{@current_shred} at #{now}"
+      callcc { |cont| @current_shred.go(cont) }
+      LOG.debug "back to run loop"
+
+      if @current_shred.finished
+        LOG.debug "#{@current_shred} finished"
+        @shreds.delete(@current_shred)
+      end
+    end
 
     # ruck main loop
     # executes all shreds and synthesizes audio
@@ -84,17 +102,7 @@ module Ruck
       @running = true
 
       while @shreds.length > 0
-        @current_shred = @shreds.min # furthest behind (Shred#<=> uses Shred's current time)
-        
-        sim_to(@current_shred.now)
-        
-        # execute shred, saving this as the resume point
-        callcc { |cont| @current_shred.go(cont) }
-
-        if @current_shred.finished
-          LOG.debug "#{@current_shred} finished"
-          @shreds.delete(@current_shred)
-        end
+        run_one
       end
 
       @running = false
