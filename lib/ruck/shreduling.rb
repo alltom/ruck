@@ -70,6 +70,10 @@ module Ruck
       LOG.debug "Removing shred \"#{name}\" at #{@now}"
       @shreds.delete shred
     end
+    
+    def next_shred
+      @shreds.min # furthest behind (Shred#<=> uses Shred's current time)
+    end
 
     # called when shreds allow time to pass
     # a convnient method to override
@@ -79,7 +83,7 @@ module Ruck
     
     # invokes the next shred, simulates to the new VM time, then returns
     def run_one
-      @current_shred = @shreds.min # furthest behind (Shred#<=> uses Shred's current time)
+      @current_shred = next_shred
       
       sim_to(@current_shred.now)
       

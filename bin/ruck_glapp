@@ -1,0 +1,73 @@
+#!/usr/bin/env ruby
+$:.unshift File.join(File.dirname(__FILE__), '..', 'lib')
+
+require "ruck"
+
+require "rubygems"
+require "glapp"
+
+class GLAppShreduler < Ruck::Shreduler
+  def initialize
+    @shreds_waiting_for_next_frame = []
+    super
+  end
+  
+  def actual_now
+    Time.now - @start_time
+  end
+  
+  def enqueue_for_next_frame(shred)
+    @shreds_waiting_for_next_frame << shred
+    @shreds.delete(shred)
+  end
+  
+  def next_frame_has_arrived
+    @shreds += @shreds_waiting_for_next_frame
+    
+    @shreds_waiting_for_next_frame.each do |shred|
+      shred.now = now
+    end
+    
+    @shreds_waiting_for_next_frame = []
+  end
+  
+  def catch_up
+    @start_time ||= Time.now
+    
+    while shreds.length > 0 && next_shred.now < actual_now
+      run_one
+    end
+  end
+end
+
+module ShredLocal
+  def wait_for_frame
+    SHREDULER.enqueue_for_next_frame(SHREDULER.current_shred)
+    SHREDULER.current_shred.yield(0)
+  end
+  
+  def wait(seconds)
+    SHREDULER.current_shred.yield(seconds)
+  end
+end
+
+class MySketch
+  def setup
+    ARGV.each do |filename|
+      SHREDULER.spork(filename) do
+        require filename
+      end
+    end
+  end
+  
+  def draw
+    SHREDULER.catch_up
+    SHREDULER.next_frame_has_arrived
+  end
+end
+
+include GLApp
+include ShredLocal
+SHREDULER = GLAppShreduler.new
+
+MySketch.new.show 800, 600, "My Sketch"
