@@ -103,7 +103,7 @@ module Ruck
   
   class UGenShreduler < Shreduler
     def run
-      require File.join(File.dirname(__FILE__), "misc", "time")
+      require File.join(File.dirname(__FILE__), "misc", "pcm_time_helpers")
       super
     end
     
