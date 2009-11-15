@@ -111,7 +111,6 @@ module Ruck
     end
   end
   
-  # TODO: gets out of sync with wall clock too easily
   class RealTimeShreduler < Shreduler
     def run
       @start_time = Time.now
