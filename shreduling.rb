@@ -70,6 +70,7 @@ module Ruck
     end
 
     # called when shreds allow time to pass
+    # a convnient method to override
     def sim_to(new_now)
       @now = new_now
     end
