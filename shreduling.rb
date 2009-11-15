@@ -69,19 +69,9 @@ module Ruck
       @shreds.delete shred
     end
 
-    # synthesizes audio by simulating fake time
-    #   on all UGens connected to the blackhole (and later, DAC)
-    def sim
-      min = @shreds.min # furthest behind (Shred#<=> uses Shred's current time)
-      bh = blackhole
-
-      # simulate samples up to furthest behind shred
-      (min.now - @now).times do
-        bh.next @now
-        @now += 1
-      end
-
-      min
+    # called when shreds allow time to pass
+    def sim_to(new_now)
+      @now = new_now
     end
 
     # ruck main loop
@@ -92,8 +82,10 @@ module Ruck
       @running = true
 
       while @shreds.length > 0
-        @current_shred = sim
-
+        @current_shred = @shreds.min # furthest behind (Shred#<=> uses Shred's current time)
+        
+        sim_to(@current_shred.now)
+        
         # execute shred, saving this as the resume point
         callcc { |cont| @current_shred.go(cont) }
 
@@ -104,6 +96,26 @@ module Ruck
       end
 
       @running = false
+    end
+  end
+  
+  class UGenShreduler < Shreduler
+    def sim_to(new_now)
+      # simulate samples up to furthest behind shred
+      # BUG: if all time steps are fractional samples, will this loop ever run?
+      (new_now - @now).times do
+        BLACKHOLE.next @now
+        @now += 1
+      end
+    end
+  end
+  
+  # TODO: gets out of sync with wall clock too easily
+  class RealTimeShreduler < Shreduler
+    def sim_to(new_now)
+      samples_to_simulate = new_now - @now
+      sleep(samples_to_simulate.to_f / SAMPLE_RATE)
+      @now += samples_to_simulate
     end
   end
 

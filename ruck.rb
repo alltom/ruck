@@ -46,7 +46,7 @@ if __FILE__ == $0
   include Ruck::Generators
   
   SAMPLE_RATE = 22050
-  SHREDULER = Ruck::Shreduler.new
+  SHREDULER = Ruck::UGenShreduler.new
   BLACKHOLE = Ruck::InChannel.new
 
   LOG.level = Logger::WARN
