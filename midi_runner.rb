@@ -53,9 +53,7 @@ end
 # midi initialization stuff
 TRACKS.each do |track|
   SEQUENCE.tracks << track
-  track.events << MIDI::Tempo.new(MIDI::Tempo.bpm_to_mpq(120))
-  track.events << MIDI::MetaEvent.new(MIDI::META_SEQ_NAME, 'Sequence Name')
-  track.events << MIDI::ProgramChange.new(0, 1, 0)
+  #track.events << MIDI::Tempo.new(MIDI::Tempo.bpm_to_mpq(120))
 end
 if ALSO_LIVE
   MIDI_PLAYER.use :dls_synth
