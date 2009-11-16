@@ -45,6 +45,10 @@ class GLAppShreduler < Ruck::Shreduler
 end
 
 module ShredLocal
+  def spork(name = "unnamed", &shred)
+    SHREDULER.spork(name, &shred)
+  end
+  
   def wait_for_frame
     SHREDULER.enqueue_for_next_frame(SHREDULER.current_shred)
     SHREDULER.current_shred.yield(0)
