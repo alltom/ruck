@@ -2,7 +2,7 @@
 module Ruck
 
   class Shred
-    attr_reader :now
+    attr_accessor :now
     attr_accessor :finished
 
     def initialize(shreduler, now, name, &block)
