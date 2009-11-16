@@ -29,7 +29,7 @@ class GLAppShreduler < Ruck::Shreduler
     @shreds += @shreds_waiting_for_next_frame
     
     @shreds_waiting_for_next_frame.each do |shred|
-      shred.now = now
+      shred.now = actual_now
     end
     
     @shreds_waiting_for_next_frame = []
@@ -69,8 +69,9 @@ class MySketch
   end
   
   def draw
-    SHREDULER.catch_up
-    SHREDULER.next_frame_has_arrived
+    SHREDULER.catch_up # execute shreds whose time came while drawing previous frame
+    SHREDULER.next_frame_has_arrived # enqueue shreds waiting for this frame
+    SHREDULER.catch_up # execute dequeued shreds (and if this takes a while, some others)
   end
 end
 
