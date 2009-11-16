@@ -19,6 +19,7 @@ begin
     EOF
     gemspec.has_rdoc = false
   end
+  Jeweler::GemcutterTasks.new
 rescue LoadError
   puts "Jewler not available. Install it with: sudo gem install jeweler"
 end
