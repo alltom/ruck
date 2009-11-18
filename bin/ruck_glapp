@@ -12,7 +12,9 @@ require "glapp"
 
 class GLAppShreduler < Ruck::Shreduler
   def initialize
-    @shreds_waiting_for_next_frame = []
+    @shred_queues = {}
+    qs = [:frame, :key_down, :key_up, :mouse_down, :mouse_up, :mouse_move]
+    qs.each { |q| @shred_queues[q] = [] }
     super
   end
   
@@ -20,19 +22,22 @@ class GLAppShreduler < Ruck::Shreduler
     Time.now - @start_time
   end
   
-  def enqueue_for_next_frame(shred)
-    @shreds_waiting_for_next_frame << shred
+  def sleep_current_til(queue)
+    shred = current_shred
     @shreds.delete(shred)
+    @shred_queues[queue] << shred
+    shred.yield(0)
   end
   
-  def next_frame_has_arrived
-    @shreds += @shreds_waiting_for_next_frame
+  def raise_event(ev, queue)
+    new_now = actual_now
     
-    @shreds_waiting_for_next_frame.each do |shred|
-      shred.now = actual_now
+    @shred_queues[queue].each do |shred|
+      shred.now = new_now
     end
     
-    @shreds_waiting_for_next_frame = []
+    @shreds += @shred_queues[queue]
+    @shred_queues[queue] = [] # yeah garbage collection
   end
   
   def catch_up
@@ -49,13 +54,32 @@ module ShredLocal
     SHREDULER.spork(name, &shred)
   end
   
-  def wait_for_frame
-    SHREDULER.enqueue_for_next_frame(SHREDULER.current_shred)
-    SHREDULER.current_shred.yield(0)
-  end
-  
   def wait(seconds)
     SHREDULER.current_shred.yield(seconds)
+  end
+  
+  def wait_for_frame
+    SHREDULER.sleep_current_til(:frame)
+  end
+  
+  def wait_for_key_down
+    SHREDULER.sleep_current_til(:key_down)
+  end
+  
+  def wait_for_key_up
+    SHREDULER.sleep_current_til(:key_down)
+  end
+  
+  def wait_for_mouse_down
+    SHREDULER.sleep_current_til(:mouse_down)
+  end
+  
+  def wait_for_mouse_up
+    SHREDULER.sleep_current_til(:mouse_up)
+  end
+  
+  def wait_for_mouse_move
+    SHREDULER.sleep_current_til(:mouse_move)
   end
 end
 
@@ -68,12 +92,45 @@ class MySketch
         require filename
       end
     end
+    @events = []
   end
   
   def draw
+    @events.each do |pair|
+      ev, queue = pair
+      SHREDULER.raise_event ev, queue
+    end
+    @events = []
+    
     SHREDULER.catch_up # execute shreds whose time came while drawing previous frame
-    SHREDULER.next_frame_has_arrived # enqueue shreds waiting for this frame
+    
+    SHREDULER.raise_event Object.new, :frame
+    
     SHREDULER.catch_up # execute dequeued shreds (and if this takes a while, some others)
+  end
+  
+  def keyboard_down(key, modifiers)
+    @events << [Struct.new(:key).new(key), :key_down]
+  end
+  
+  def keyboard_up(key, modifiers)
+    @events << [Struct.new(:key).new(key), :key_up]
+  end
+  
+  def special_keyboard_down(key, modifiers)
+    @events << [Struct.new(:key).new(key), :key_down]
+  end
+  
+  def special_keyboard_up(key, modifiers)
+    @events << [Struct.new(:key).new(key), :key_up]
+  end
+  
+  def mouse_click(button, state, x, y)
+    puts "mouse click #{button}, #{state}"
+  end
+  
+  def mouse_motion(x, y)
+    @events << [Struct.new(:x, :y).new(x, y), :mouse_move]
   end
 end
 
