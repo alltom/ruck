@@ -27,17 +27,28 @@ class GLAppShreduler < Ruck::Shreduler
     @shreds.delete(shred)
     @shred_queues[queue] << shred
     shred.yield(0)
+    
+    puts "#{shred} coming back from yield"
+    ev = @ev
+    @ev = nil
+    ev
   end
   
   def raise_event(ev, queue)
+    # should use actual_now, but don't want to skip over execution of other shreds
     new_now = actual_now
+    new_now = [new_now, next_shred.now].min if next_shred
     
+    puts "raising #{queue}"
     @shred_queues[queue].each do |shred|
+      puts "setting up #{shred}"
       shred.now = new_now
+      @shreds << shred
+      @ev = ev
+      invoke_shred shred
     end
     
-    @shreds += @shred_queues[queue]
-    @shred_queues[queue] = [] # yeah garbage collection
+    @shred_queues[queue] = []
   end
   
   def catch_up
