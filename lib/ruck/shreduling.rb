@@ -2,7 +2,7 @@
 module Ruck
 
   class Shred
-    attr_reader :now
+    attr_accessor :now
     attr_accessor :finished
 
     def initialize(shreduler, now, name, &block)
@@ -15,17 +15,23 @@ module Ruck
 
     def go(resume)
       @resume = resume
+      
+      # TODO
+      # I don't think this is the right place to catch errors.
+      # I've read the strangest memory errors after an exception
+      # is caught here; I have a feeling exceptions ought to be
+      # caught within the continuation itself.
       begin
         @block.call self
       rescue => e
         LOG.error "#{self} exited uncleanly:\n#{e}\n#{e.backtrace}"
       end
+      
       @finished = true
     end
 
     def yield(samples)
       LOG.debug "shred #{self} yielding #{samples}"
-      samples = samples
       @now += samples
       callcc do |cont|
         @block = cont # save where we are
@@ -81,16 +87,20 @@ module Ruck
       @now = new_now
     end
     
+    def invoke_shred(shred)
+      # execute shred, saving this as the resume point
+      LOG.debug "resuming shred #{@current_shred} at #{now}"
+      callcc { |cont| @current_shred.go(cont) }
+      LOG.debug "back to run loop"
+    end
+    
     # invokes the next shred, simulates to the new VM time, then returns
     def run_one
       @current_shred = next_shred
       
       sim_to(@current_shred.now)
       
-      # execute shred, saving this as the resume point
-      LOG.debug "resuming shred #{@current_shred} at #{now}"
-      callcc { |cont| @current_shred.go(cont) }
-      LOG.debug "back to run loop"
+      invoke_shred @current_shred
 
       if @current_shred.finished
         LOG.debug "#{@current_shred} finished"
