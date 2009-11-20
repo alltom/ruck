@@ -4,6 +4,8 @@ $:.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 # requires glapp gem
 # sudo gem install alltom-glapp
 # see http://alltom.com/pages/glapp for more details
+# UPDATE: ugh, github stopped producing gems.
+#         find a way to get it on your own 'til I fix that.
 
 require "ruck"
 
@@ -13,9 +15,16 @@ require "glapp"
 class GLAppShreduler < Ruck::Shreduler
   def initialize
     @shred_queues = {}
-    qs = [:frame, :key_down, :key_up, :mouse_down, :mouse_up, :mouse_move]
-    qs.each { |q| @shred_queues[q] = [] }
+    [:frame,
+     :key_down, :key_up,
+     :mouse_down, :mouse_up, :mouse_move].each do |q|
+      @shred_queues[q] = []
+    end
     super
+  end
+  
+  def starting
+    @start_time = Time.now
   end
   
   def actual_now
@@ -28,32 +37,29 @@ class GLAppShreduler < Ruck::Shreduler
     @shred_queues[queue] << shred
     shred.yield(0)
     
-    puts "#{shred} coming back from yield"
-    ev = @ev
-    @ev = nil
-    ev
+    @ev
   end
   
   def raise_event(ev, queue)
-    # should use actual_now, but don't want to skip over execution of other shreds
+    # should use actual_now,
+    # but we don't want to put it into the future
     new_now = actual_now
     new_now = [new_now, next_shred.now].min if next_shred
+    @now = new_now
     
-    puts "raising #{queue}"
-    @shred_queues[queue].each do |shred|
-      puts "setting up #{shred}"
+    @ev = ev # returned by sleep_current_til
+    
+    shreds = @shred_queues[queue]
+    @shred_queues[queue] = []
+    
+    shreds.each do |shred|
       shred.now = new_now
       @shreds << shred
-      @ev = ev
       invoke_shred shred
     end
-    
-    @shred_queues[queue] = []
   end
   
   def catch_up
-    @start_time ||= Time.now
-    
     while shreds.length > 0 && next_shred.now < actual_now
       run_one
     end
@@ -104,6 +110,8 @@ class MySketch
       end
     end
     @events = []
+    
+    SHREDULER.starting
   end
   
   def draw
@@ -116,8 +124,6 @@ class MySketch
     SHREDULER.catch_up # execute shreds whose time came while drawing previous frame
     
     SHREDULER.raise_event Object.new, :frame
-    
-    SHREDULER.catch_up # execute dequeued shreds (and if this takes a while, some others)
   end
   
   def keyboard_down(key, modifiers)
@@ -137,7 +143,11 @@ class MySketch
   end
   
   def mouse_click(button, state, x, y)
-    puts "mouse click #{button}, #{state}"
+    if state == 0
+      @events << [Struct.new(:button, :x, :y).new(button, x, y), :mouse_down]
+    else
+      @events << [Struct.new(:button, :x, :y).new(button, x, y), :mouse_up]
+    end
   end
   
   def mouse_motion(x, y)
