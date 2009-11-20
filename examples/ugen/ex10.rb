@@ -2,14 +2,14 @@
 
 spork("a") do
   loop do
-    play 1.second
+    wait 1
     puts "second"
   end
 end
 
 spork("b") do
   loop do
-    play 0.5.second
+    wait 0.5
     puts "       half-second"
   end
 end
