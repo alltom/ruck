@@ -9,18 +9,30 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Tom Lieber"]
-  s.date = %q{2009-11-15}
-  s.description = %q{strong timing for Ruby: cooperative threads on a virtual clock}
+  s.date = %q{2009-11-16}
+  s.description = %q{      Ruck uses continuations and a simple scheduler to ensure "shreds"
+      (threads in Ruck) are woken at precisely the right time according
+      to its virtual clock. Schedulers can map virtual time to samples
+      in a WAV file, real time, time in a MIDI file, or anything else
+      by overriding "sim_to" in the Shreduler class.
+      
+      A small library of useful unit generators and plenty of examples
+      are provided. See the README or the web page for details.
+}
   s.email = %q{tom@alltom.com}
-  s.executables = ["ruck_midi", "ruck_ugen"]
+  s.executables = ["ruck_glapp", "ruck_midi", "ruck_ugen"]
   s.extra_rdoc_files = [
     "README"
   ]
   s.files = [
-    "README",
+    ".gitignore",
+     "README",
+     "Rakefile",
      "VERSION",
+     "bin/ruck_glapp",
      "bin/ruck_midi",
      "bin/ruck_ugen",
+     "examples/glapp/ex01.rb",
      "examples/midi/ex01.rb",
      "examples/ugen/ex01.rb",
      "examples/ugen/ex02.rb",
@@ -34,17 +46,18 @@ Gem::Specification.new do |s|
      "examples/ugen/ex10.rb",
      "examples/ugen/ex11.rb",
      "examples/ugen/ex12.rb",
-     "lib/bench.rb",
-     "lib/misc/linkage.rb",
-     "lib/misc/metaid.rb",
-     "lib/misc/pcm_time_helpers.rb",
-     "lib/misc/riff.rb",
-     "lib/misc/wavparse.rb",
      "lib/ruck.rb",
-     "lib/shreduling.rb",
-     "lib/ugen/general.rb",
-     "lib/ugen/oscillators.rb",
-     "lib/ugen/wav.rb"
+     "lib/ruck/bench.rb",
+     "lib/ruck/misc/linkage.rb",
+     "lib/ruck/misc/metaid.rb",
+     "lib/ruck/misc/pcm_time_helpers.rb",
+     "lib/ruck/misc/riff.rb",
+     "lib/ruck/misc/wavparse.rb",
+     "lib/ruck/shreduling.rb",
+     "lib/ruck/ugen/general.rb",
+     "lib/ruck/ugen/oscillators.rb",
+     "lib/ruck/ugen/wav.rb",
+     "ruck.gemspec"
   ]
   s.homepage = %q{http://github.com/alltom/ruck}
   s.rdoc_options = ["--charset=UTF-8"]
@@ -52,7 +65,8 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.5}
   s.summary = %q{strong timing for Ruby: cooperative threads on a virtual clock}
   s.test_files = [
-    "examples/midi/ex01.rb",
+    "examples/glapp/ex01.rb",
+     "examples/midi/ex01.rb",
      "examples/ugen/ex01.rb",
      "examples/ugen/ex02.rb",
      "examples/ugen/ex03.rb",
