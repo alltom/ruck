@@ -124,6 +124,12 @@ module ShredLocal
 
 end
 
+def save
+  return if @saved
+  @saved = true
+  File.open(MIDI_FILENAME, "wb") { |file| SEQUENCE.write(file) }
+end
+
 FILENAMES.each do |filename|
   unless File.readable?(filename)
     LOG.fatal "Cannot read file #{filename}"
@@ -138,6 +144,8 @@ FILENAMES.each do |filename|
   end
 end
 
+at_exit { save }
+
 SHREDULER.run
 
-File.open(MIDI_FILENAME, "wb") { |file| SEQUENCE.write(file) }
+save
