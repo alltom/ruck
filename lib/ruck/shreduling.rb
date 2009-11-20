@@ -90,21 +90,22 @@ module Ruck
     def invoke_shred(shred)
       # execute shred, saving this as the resume point
       LOG.debug "resuming shred #{@current_shred} at #{now}"
+      @current_shred = shred
       callcc { |cont| @current_shred.go(cont) }
       LOG.debug "back to run loop"
     end
     
     # invokes the next shred, simulates to the new VM time, then returns
     def run_one
-      @current_shred = next_shred
+      shred = next_shred
       
-      sim_to(@current_shred.now)
+      sim_to(shred.now)
       
-      invoke_shred @current_shred
+      invoke_shred shred
 
       if @current_shred.finished
-        LOG.debug "#{@current_shred} finished"
-        @shreds.delete(@current_shred)
+        LOG.debug "#{shred} finished"
+        @shreds.delete(shred)
       end
     end
 
