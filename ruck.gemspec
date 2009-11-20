@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{ruck}
-  s.version = "0.1.1"
+  s.version = "0.1.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Tom Lieber"]
@@ -35,7 +35,9 @@ Gem::Specification.new do |s|
      "bin/ruck_ugen",
      "examples/glapp/ex01.rb",
      "examples/glapp/ex02.rb",
+     "examples/glapp/ex03.rb",
      "examples/midi/ex01.rb",
+     "examples/midi/ex02.rb",
      "examples/ugen/ex01.rb",
      "examples/ugen/ex02.rb",
      "examples/ugen/ex03.rb",
@@ -69,7 +71,9 @@ Gem::Specification.new do |s|
   s.test_files = [
     "examples/glapp/ex01.rb",
      "examples/glapp/ex02.rb",
+     "examples/glapp/ex03.rb",
      "examples/midi/ex01.rb",
+     "examples/midi/ex02.rb",
      "examples/ugen/ex01.rb",
      "examples/ugen/ex02.rb",
      "examples/ugen/ex03.rb",
