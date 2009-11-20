@@ -14,22 +14,23 @@ def note_off(note, channel = 0)
   $midi.driver.note_on(note, channel, 0)
 end
 
+def star_shifter(key)
+  wait 3
+  @stars.shift
+  note_off(key)
+end
+
 spork do
   while ev = wait_for_key_down
-    puts ev.inspect
-    #note_on(ev.key)
+    note_on(ev.key)
 
     @stars << Star.new
-    spork("star manager") do
-      wait 3
-      @stars.shift
-    end
+    spork { star_shifter ev.key }
   end
 end
 
 spork do
   while ev = wait_for_key_up
-    #note_off(ev.key)
   end
 end
 
