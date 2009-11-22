@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Tom Lieber"]
-  s.date = %q{2009-11-20}
+  s.date = %q{2009-11-21}
   s.description = %q{      Ruck uses continuations and a simple scheduler to ensure "shreds"
       (threads in Ruck) are woken at precisely the right time according
       to its virtual clock. Schedulers can map virtual time to samples
