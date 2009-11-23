@@ -1,12 +1,19 @@
 A port of ChucK's strong timing to Ruby!
 
-Use Ruck's "shreds" to coordinate interleaved execution
-of threads (continuations) with precise virtual timing.
-Actual run-time is abstracted and shreds declare how much
-virtual time they took to execute. Scheduling of shreds
-is done by a ...
+ruck lets you easily create a virtual clock against
+which precise timing of execution can be guaranteed. The
+virtual clock can be kept roughly in sync with real time
+if you want it to, but you don't have to. For example, in
+ChucK, even if your scripts take too long to generate
+samples in real time, the audio stream isn't compromised
+because it's timed against the virtual clock.
 
-  SHREDULER
+ruck provides an easily extended scheduler for non-preemptive
+shreds (threads) implemented using continuations.
+Cooperatively scheduled threads usually don't require
+synchronization since execution is never interrupted.
+
+A few example shredulers (schedulers) are provided:
 
 UGenShreduler:
 
@@ -17,7 +24,7 @@ UGenShreduler:
   The graph is written in Ruby for flexibility, so it's
   too slow (on my computer) for real time, so there is no
   real-time playback. You can use WavOut, though.
-  (See ex01.rb)
+  (See examples/ugen/ex01.rb)
 
   Check out the library of built-in unit generators in ugen/
   and make your own.
@@ -25,14 +32,15 @@ UGenShreduler:
   Unit Generator Usage
   ====================
 
-  Play a sine wave (ex02.rb):
+  Play a sine wave (examples/ugen/ex02.rb):
 
     s = SinOsc.new(:freq => 440)
     w = WavOut.new(:filename => "ex02.wav")
     s >> w >> blackhole
     play 3.seconds
 
-  Attach lambdas to unit generator attributes (ex03.rb):
+  Attach lambdas to unit generator attributes
+  (examples/ugen/ex03.rb):
 
     wav = WavOut.new(:filename => "ex03.wav")
     sin2 = SinOsc.new(:freq => 3)
@@ -45,7 +53,7 @@ RealTimeShreduler
 
   This shreduler attempts to keep virtual time in line with
   real time.
-  (See ex10.rb)
+  (See examples/ugen/ex10.rb)
 
 MIDIShreduler
 
@@ -77,4 +85,4 @@ examples/ directory. Those scripts contain no boilerplate includes
 because they are written to be invoked on the command line by
 one of the bin/ scripts. For example:
 
-  $ ruck_ugen examples/ex01.rb
+  $ ruck_ugen examples/ugen/ex01.rb
