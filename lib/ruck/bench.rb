@@ -21,12 +21,12 @@ if ARGV.include? "bench.rb"
 else
   # benchmark UGens without shreduling
 
-  require "ruck"
-  TIME = 1.seconds
+  require "../ruck"
+  TIME = SAMPLE_RATE * 4
   dac = Ruck::InChannel.new
   count = 0
   @now = 0
-  puts "Simulating #{TIME / 1.second} seconds"
+  puts "Simulating #{TIME / SAMPLE_RATE} seconds"
   loop do
     Ruck::Generators::Step.new >> dac
     count += 1
@@ -39,6 +39,6 @@ else
     time = Time.now - start
     puts "#{count}: #{time}"
 
-    break if time > (TIME / 1.second)
+    break if time > (TIME / SAMPLE_RATE)
   end
 end
