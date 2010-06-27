@@ -55,14 +55,7 @@ RealTimeShreduler
 
 MIDIShreduler
 
-  This shreduler uses MIDIator and midilib to support live
-  MIDI playback and saving MIDI to disk. An example runner
-  is provided in midi_runner.rb which you invoke like this:
-  
-    $ ruck_midi MIDI_FILENAME NUM_TRACKS LIVE SCRIPT_FILENAME [...]
-  
-  where LIVE is "no" to only save the MIDI output, or "yes"
-  to also play in real-time.
+  Recently moved to its own gem: ruck-midi
 
 GLAppShreduler
 

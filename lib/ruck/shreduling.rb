@@ -4,6 +4,7 @@ module Ruck
   class Shred
     attr_accessor :now
     attr_accessor :finished
+    attr_accessor :name
 
     def initialize(shreduler, now, name, &block)
       @shreduler = shreduler
@@ -28,6 +29,7 @@ module Ruck
       end
       
       @finished = true
+      @shreduler.remove_shred self
     end
 
     def yield(samples)
@@ -41,7 +43,12 @@ module Ruck
     end
 
     def finish
-      @resume.call # last save point
+      @finished = true
+      @shreduler.remove_shred self
+      
+      if @shreduler.current_shred == self
+        @resume.call # last save point
+      end
     end
 
     # shreds sort in order of position in time
@@ -66,14 +73,15 @@ module Ruck
       @running = false
     end
 
-    def spork(name = "", &shred)
-      LOG.debug "Adding shred \"#{name}\" at #{@now}"
-      @shreds << Shred.new(self, @now, name, &shred)
-      @shred
+    def spork(name = "", &shred_block)
+      shred = Shred.new(self, @now, name, &shred_block)
+      LOG.debug "Adding shred \"#{shred.name}\" at #{@now}"
+      @shreds << shred
+      shred
     end
 
     def remove_shred(shred)
-      LOG.debug "Removing shred \"#{name}\" at #{@now}"
+      LOG.debug "Removing shred \"#{shred.name}\" at #{@now}"
       @shreds.delete shred
     end
     
@@ -101,11 +109,11 @@ module Ruck
       
       sim_to(shred.now)
       
-      invoke_shred shred
+      invoke_shred(shred)
 
       if @current_shred.finished
         LOG.debug "#{shred} finished"
-        @shreds.delete(shred)
+        remove_shred(shred)
       end
     end
 

@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
       are provided. See the README or the web page for details.
 }
   s.email = %q{tom@alltom.com}
-  s.executables = ["ruck_glapp", "ruck_midi", "ruck_ugen"]
+  s.executables = ["ruck_glapp", "ruck_ugen"]
   s.extra_rdoc_files = [
     "README"
   ]
@@ -30,13 +30,10 @@ Gem::Specification.new do |s|
      "Rakefile",
      "VERSION",
      "bin/ruck_glapp",
-     "bin/ruck_midi",
      "bin/ruck_ugen",
      "examples/glapp/ex01.rb",
      "examples/glapp/ex02.rb",
      "examples/glapp/ex03.rb",
-     "examples/midi/ex01.rb",
-     "examples/midi/ex02.rb",
      "examples/ugen/ex01.rb",
      "examples/ugen/ex02.rb",
      "examples/ugen/ex03.rb",
@@ -70,8 +67,6 @@ Gem::Specification.new do |s|
     "examples/glapp/ex01.rb",
      "examples/glapp/ex02.rb",
      "examples/glapp/ex03.rb",
-     "examples/midi/ex01.rb",
-     "examples/midi/ex02.rb",
      "examples/ugen/ex01.rb",
      "examples/ugen/ex02.rb",
      "examples/ugen/ex03.rb",
