@@ -1,6 +1,19 @@
 
 module Ruck
 
+  class UGenShreduler < Ruck::Shreduler
+    def run
+      super
+    end
+
+    def sim_to(new_now)
+      while @now < new_now.to_i
+        BLACKHOLE.next @now
+        @now += 1
+      end
+    end
+  end
+
   module UGen
 
     def to_s
@@ -405,4 +418,34 @@ end
 # Allow chucking all elements of an array to
 class Array
   include Ruck::Source
+end
+
+# time helpers
+module RuckTime
+  def sample
+    self
+  end
+  alias_method :samples, :sample
+  
+  def ms
+    self.to_f * SAMPLE_RATE / 1000.0
+  end
+  
+  def second
+    self.to_f * SAMPLE_RATE
+  end
+  alias_method :seconds, :second
+  
+  def minute
+    self.to_f * SAMPLE_RATE * 60.0
+  end
+  alias_method :minutes, :minute
+end
+
+class Fixnum
+  include RuckTime
+end
+
+class Float
+  include RuckTime
 end

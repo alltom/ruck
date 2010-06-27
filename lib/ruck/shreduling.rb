@@ -124,20 +124,6 @@ module Ruck
     end
   end
   
-  class UGenShreduler < Shreduler
-    def run
-      require File.join(File.dirname(__FILE__), "misc", "pcm_time_helpers")
-      super
-    end
-    
-    def sim_to(new_now)
-      while @now < new_now.to_i
-        BLACKHOLE.next @now
-        @now += 1
-      end
-    end
-  end
-  
   class RealTimeShreduler < Shreduler
     def run
       @start_time = Time.now
