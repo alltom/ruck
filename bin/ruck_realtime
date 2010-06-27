@@ -1,32 +1,10 @@
 #!/usr/bin/env ruby
+
+# for testing inside gem dir
 $:.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 
 require "ruck"
 require "ruck/realtime"
-
-# stuff accessible in a shred
-module ShredLocal
-  
-  def now
-    SHREDULER.now
-  end
-
-  def spork(name = "unnamed", &shred)
-    SHREDULER.spork(name, &shred)
-  end
-
-  def wait(seconds)
-    SHREDULER.current_shred.yield(seconds)
-  end
-
-  def finish
-    shred = SHREDULER.current_shred
-    SHREDULER.remove_shred shred
-    shred.finish
-  end
-
-end
-
 
 SHREDULER = Ruck::RealTime::RealTimeShreduler.new
 
@@ -40,8 +18,9 @@ end
 
 filenames.each do |filename|
   SHREDULER.spork(filename) do
-    include ShredLocal
+    include Ruck::RealTime::ShredLocal
     require filename
   end
 end
+
 SHREDULER.run
