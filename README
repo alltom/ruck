@@ -51,10 +51,7 @@ UGenShreduler:
 
 RealTimeShreduler
 
-  This shreduler attempts to keep virtual time in line with
-  real time.
-
-    $ ruck_realtime examples/realtime/ex01.rb
+  Recently moved to its own gem: ruck-realtime
 
 MIDIShreduler
 

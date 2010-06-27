@@ -1,15 +1,17 @@
+require 'rubygems'
+require 'rake'
 
 begin
   require "jeweler"
-  Jeweler::Tasks.new do |gemspec|
-    gemspec.name = "ruck"
-    gemspec.email = "tom@alltom.com"
-    gemspec.homepage = "http://github.com/alltom/ruck"
-    gemspec.authors = ["Tom Lieber"]
-    gemspec.summary = "strong timing for Ruby: cooperative threads on a virtual clock"
-    gemspec.description = <<-EOF
+  Jeweler::Tasks.new do |gem|
+    gem.name = "ruck"
+    gem.email = "tom@alltom.com"
+    gem.homepage = "http://github.com/alltom/ruck"
+    gem.authors = ["Tom Lieber"]
+    gem.summary = "strong timing for Ruby: cooperative threads on a virtual clock"
+    gem.description = <<-EOF
       Ruck uses continuations and a simple scheduler to ensure "shreds"
-      (threads in Ruck) are woken at precisely the right time according
+      (Ruck threads) are woken at precisely the right time according
       to its virtual clock. Schedulers can map virtual time to samples
       in a WAV file, real time, time in a MIDI file, or anything else
       by overriding "sim_to" in the Shreduler class.
@@ -17,9 +19,10 @@ begin
       A small library of useful unit generators and plenty of examples
       are provided. See the README or the web page for details.
     EOF
-    gemspec.has_rdoc = false
+    gem.has_rdoc = false
+    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
-  puts "Jewler not available. Install it with: sudo gem install jeweler"
+  puts "Jeweler (or a dependency) not available. Install it with: gem install jeweler"
 end
