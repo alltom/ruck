@@ -1,5 +1,6 @@
 
-# time helpers
+# time helpers so you can write 4.seconds, 1.sample, etc
+
 module RuckTime
   def sample
     self
