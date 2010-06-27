@@ -91,7 +91,7 @@ module ShredLocal
   end
 end
 
-class MySketch
+class RuckSketch
   include GLApp
   
   def initialize(filenames)
@@ -154,4 +154,4 @@ SHREDULER = GLAppShreduler.new
 
 include GLApp::Helpers
 include ShredLocal
-MySketch.new(ARGV).show 800, 600, "My Sketch"
+RuckSketch.new(ARGV).show 800, 600, "My Sketch"
