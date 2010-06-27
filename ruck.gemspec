@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{ruck}
-  s.version = "0.1.2"
+  s.version = "0.2.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Tom Lieber"]
-  s.date = %q{2009-11-21}
+  s.date = %q{2010-06-26}
   s.description = %q{      Ruck uses continuations and a simple scheduler to ensure "shreds"
       (threads in Ruck) are woken at precisely the right time according
       to its virtual clock. Schedulers can map virtual time to samples
@@ -54,19 +54,19 @@ Gem::Specification.new do |s|
      "lib/ruck/bench.rb",
      "lib/ruck/misc/linkage.rb",
      "lib/ruck/misc/metaid.rb",
-     "lib/ruck/misc/pcm_time_helpers.rb",
      "lib/ruck/misc/riff.rb",
-     "lib/ruck/misc/wavparse.rb",
      "lib/ruck/shreduling.rb",
-     "lib/ruck/ugen/general.rb",
+     "lib/ruck/ugen.rb",
      "lib/ruck/ugen/oscillators.rb",
+     "lib/ruck/ugen/time_helpers.rb",
+     "lib/ruck/ugen/ugen.rb",
      "lib/ruck/ugen/wav.rb",
      "ruck.gemspec"
   ]
   s.homepage = %q{http://github.com/alltom/ruck}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.5}
+  s.rubygems_version = %q{1.3.6}
   s.summary = %q{strong timing for Ruby: cooperative threads on a virtual clock}
   s.test_files = [
     "examples/glapp/ex01.rb",
