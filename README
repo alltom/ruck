@@ -53,7 +53,8 @@ RealTimeShreduler
 
   This shreduler attempts to keep virtual time in line with
   real time.
-  (See examples/ugen/ex10.rb)
+
+    $ ruck_realtime examples/realtime/ex01.rb
 
 MIDIShreduler
 

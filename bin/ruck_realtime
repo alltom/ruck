@@ -2,6 +2,7 @@
 $:.unshift File.join(File.dirname(__FILE__), '..', 'lib')
 
 require "ruck"
+require "ruck/realtime"
 
 # stuff accessible in a shred
 module ShredLocal
@@ -27,7 +28,7 @@ module ShredLocal
 end
 
 
-SHREDULER = Ruck::RealTimeShreduler.new
+SHREDULER = Ruck::RealTime::RealTimeShreduler.new
 
 filenames = ARGV
 filenames.each do |filename|
