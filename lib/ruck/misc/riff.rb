@@ -1,4 +1,13 @@
 
+# module for parsing RIFF files (the binary protocol
+# used for packets in a WAV file, for example)
+
+# get an array of all the RIFF chunks in a file:
+#   RiffReader.new("file.wav").chunks
+
+# this library avoids loading the entire file into
+# memory by LEAVING THE FILE OPEN FOR READING FOREVER.
+
 module Riff
   
   class RiffReaderChunk
@@ -14,12 +23,16 @@ module Riff
     
     def type
       return @type if @type
+      return nil if @fn.closed?
+      
       @fn.seek @start
       @type = @fn.read(4)
     end
     
     def size
       return @size - @data_skip if @size
+      return nil if @fn.closed?
+      
       @fn.seek @size_start
       @size = @fn.read(4).unpack("L")[0]
       @size - @data_skip
@@ -27,6 +40,8 @@ module Riff
     
     # pass a Range of bytes, or start and length
     def [](*args)
+      return if @fn.closed?
+      
       first, last = case args.length
                     when 1; [args.first.begin, args.first.end]
                     when 2; [args[0], args[0] + args[1]]
@@ -36,13 +51,18 @@ module Riff
     end
     
     def chunks
+      return @chunks if @chunks
+      return [] if @fn.closed?
+      
       offset = @data_start + @data_skip
-      chunks = []
+      @chunks = []
       while offset + @data_skip - @data_start < size
-        chunks << chunk = RiffReaderChunk.new(@fn, offset)
+        chunk = RiffReaderChunk.new(@fn, offset)
+        @chunks << chunk
         offset += @data_start + chunk.size
       end
-      chunks
+      
+      @chunks
     end
     
     def to_s
@@ -57,15 +77,25 @@ module Riff
     end
     
     def chunks
+      return @chunks if @chunks
+      return [] if @fn.closed?
+      
       offset = 0
-      chunks = []
+      @chunks = []
       until @fn.eof?
-        chunks << chunk = RiffReaderChunk.new(@fn, offset)
+        chunk = RiffReaderChunk.new(@fn, offset)
+        @chunks << chunk
         offset += 8 + chunk.size
         @fn.seek offset + 8
       end
-      chunks
+      
+      @chunks
     end
+    
+    def close
+      @fn.close unless @fn.closed?
+    end
+    
   end
   
 end
