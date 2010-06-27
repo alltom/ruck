@@ -75,28 +75,19 @@ module ShredLocal
     SHREDULER.current_shred.yield(seconds)
   end
   
-  def wait_for_frame
-    SHREDULER.sleep_current_til(:frame)
-  end
-  
-  def wait_for_key_down
-    SHREDULER.sleep_current_til(:key_down)
-  end
-  
-  def wait_for_key_up
-    SHREDULER.sleep_current_til(:key_down)
-  end
-  
-  def wait_for_mouse_down
-    SHREDULER.sleep_current_til(:mouse_down)
-  end
-  
-  def wait_for_mouse_up
-    SHREDULER.sleep_current_til(:mouse_up)
-  end
-  
-  def wait_for_mouse_move
-    SHREDULER.sleep_current_til(:mouse_move)
+  [:frame, :key_down, :key_up, :mouse_down, :mouse_up, :mouse_move].each do |event|
+    define_method("wait_for_#{event}") do
+      SHREDULER.sleep_current_til(event)
+    end
+    
+    define_method("on_#{event}") do |&blk|
+      spork do
+        loop do
+          ev = SHREDULER.sleep_current_til(event)
+          blk[ev]
+        end
+      end
+    end
   end
 end
 

@@ -6,4 +6,8 @@ spork do
   end
 end
 
+on_key_down do |ev|
+  puts "you pressed #{ev.key}"
+end
+
 clear
