@@ -33,8 +33,8 @@ end
 
 
 SAMPLE_RATE = 22050
-SHREDULER = Ruck::UGenShreduler.new
-BLACKHOLE = Ruck::InChannel.new
+SHREDULER = Ruck::UGen::UGenShreduler.new
+BLACKHOLE = Ruck::UGen::InChannel.new
 
 filenames = ARGV
 filenames.each do |filename|
@@ -47,7 +47,7 @@ end
 filenames.each do |filename|
   SHREDULER.spork(filename) do
     include ShredLocal
-    include Ruck::Generators
+    include Ruck::UGen::Generators
     require filename
   end
 end

@@ -1,10 +1,9 @@
-# multi-channel WavOut
+# adds 60 Hz hum to a stereo wav file
 
-s1 = SinOsc.new :freq => 440
-s2 = SinOsc.new :freq => 440 * 2
-wav = WavOut.new :filename => "ex11.wav", :num_channels => 2
-s1 >> wav.in(0)
-s2 >> wav.in(1)
-wav >> blackhole
+wavin = WavIn.new :filename => "ex10.wav", :gain => 0.5
+wavout = WavOut.new :filename => "ex11.wav", :num_channels => 2
+wavin >> wavout
+SinOsc.new(:freq => 60, :gain => 0.5) >> wavout
+wavout >> blackhole
 
 play 3.seconds

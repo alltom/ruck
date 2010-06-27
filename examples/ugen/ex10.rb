@@ -1,15 +1,10 @@
-# when run with RealTimeShreduler, illustrates the passage of time
+# multi-channel WavOut
 
-spork("a") do
-  loop do
-    wait 1
-    puts "second"
-  end
-end
+s1 = SinOsc.new :freq => 440
+s2 = SinOsc.new :freq => 440 * 2
+wav = WavOut.new :filename => "ex10.wav", :num_channels => 2
+s1 >> wav.in(0)
+s2 >> wav.in(1)
+wav >> blackhole
 
-spork("b") do
-  loop do
-    wait 0.5
-    puts "       half-second"
-  end
-end
+play 3.seconds
