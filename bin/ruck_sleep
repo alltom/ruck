@@ -27,7 +27,6 @@ module ShredLocal
 end
 
 
-SAMPLE_RATE = 1
 SHREDULER = Ruck::RealTimeShreduler.new
 
 filenames = ARGV

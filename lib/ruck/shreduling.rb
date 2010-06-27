@@ -132,7 +132,7 @@ module Ruck
     
     def sim_to(new_now)
       actual_now = Time.now
-      simulated_now = @start_time + (new_now.to_f / SAMPLE_RATE)
+      simulated_now = @start_time + new_now.to_f
       if simulated_now > actual_now
         sleep(simulated_now - actual_now)
       end
