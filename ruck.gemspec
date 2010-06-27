@@ -53,7 +53,6 @@ Gem::Specification.new do |s|
      "lib/ruck.rb",
      "lib/ruck/bench.rb",
      "lib/ruck/misc/linkage.rb",
-     "lib/ruck/misc/metaid.rb",
      "lib/ruck/misc/riff.rb",
      "lib/ruck/shreduling.rb",
      "lib/ruck/ugen.rb",
