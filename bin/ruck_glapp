@@ -103,8 +103,12 @@ end
 class MySketch
   include GLApp
   
+  def initialize(filenames)
+    @filenames = filenames
+  end
+  
   def setup
-    ARGV.each do |filename|
+    @filenames.each do |filename|
       SHREDULER.spork(filename) do
         require filename
       end
@@ -159,4 +163,4 @@ SHREDULER = GLAppShreduler.new
 
 include GLApp::Helpers
 include ShredLocal
-MySketch.new.show 800, 600, "My Sketch"
+MySketch.new(ARGV).show 800, 600, "My Sketch"
