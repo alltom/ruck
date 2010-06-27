@@ -56,6 +56,7 @@ Gem::Specification.new do |s|
      "lib/ruck/misc/riff.rb",
      "lib/ruck/shreduling.rb",
      "lib/ruck/ugen.rb",
+     "lib/ruck/ugen/basic.rb",
      "lib/ruck/ugen/oscillators.rb",
      "lib/ruck/ugen/time_helpers.rb",
      "lib/ruck/ugen/ugen.rb",
