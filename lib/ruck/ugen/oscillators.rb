@@ -1,4 +1,7 @@
 
+# a bunch of oscillating unit generators (SinOsc,
+# SawOsc, TriOsc) and their base class, Oscillator
+
 module Ruck
   
   module Oscillator
