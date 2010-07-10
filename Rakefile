@@ -15,9 +15,6 @@ begin
       to its virtual clock. Schedulers can map virtual time to samples
       in a WAV file, real time, time in a MIDI file, or anything else
       by overriding "sim_to" in the Shreduler class.
-      
-      A small library of useful unit generators and plenty of examples
-      are provided. See the README or the web page for details.
     EOF
     gem.has_rdoc = false
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings

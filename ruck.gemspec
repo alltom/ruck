@@ -15,9 +15,6 @@ Gem::Specification.new do |s|
       to its virtual clock. Schedulers can map virtual time to samples
       in a WAV file, real time, time in a MIDI file, or anything else
       by overriding "sim_to" in the Shreduler class.
-      
-      A small library of useful unit generators and plenty of examples
-      are provided. See the README or the web page for details.
 }
   s.email = %q{tom@alltom.com}
   s.extra_rdoc_files = [
