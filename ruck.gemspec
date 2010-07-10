@@ -9,7 +9,8 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Tom Lieber"]
-  s.date = %q{2010-06-27}
+  s.date = %q{2010-07-10}
+  s.default_executable = %q{ruck_ugen}
   s.description = %q{      Ruck uses continuations and a simple scheduler to ensure "shreds"
       (Ruck threads) are woken at precisely the right time according
       to its virtual clock. Schedulers can map virtual time to samples
@@ -20,7 +21,7 @@ Gem::Specification.new do |s|
       are provided. See the README or the web page for details.
 }
   s.email = %q{tom@alltom.com}
-  s.executables = ["ruck_glapp", "ruck_ugen"]
+  s.executables = ["ruck_ugen"]
   s.extra_rdoc_files = [
     "README"
   ]
@@ -29,11 +30,7 @@ Gem::Specification.new do |s|
      "README",
      "Rakefile",
      "VERSION",
-     "bin/ruck_glapp",
      "bin/ruck_ugen",
-     "examples/glapp/ex01.rb",
-     "examples/glapp/ex02.rb",
-     "examples/glapp/ex03.rb",
      "examples/ugen/ex01.rb",
      "examples/ugen/ex02.rb",
      "examples/ugen/ex03.rb",
@@ -64,10 +61,7 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.6}
   s.summary = %q{strong timing for Ruby: cooperative threads on a virtual clock}
   s.test_files = [
-    "examples/glapp/ex01.rb",
-     "examples/glapp/ex02.rb",
-     "examples/glapp/ex03.rb",
-     "examples/ugen/ex01.rb",
+    "examples/ugen/ex01.rb",
      "examples/ugen/ex02.rb",
      "examples/ugen/ex03.rb",
      "examples/ugen/ex04.rb",
