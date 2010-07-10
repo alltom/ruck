@@ -17,37 +17,7 @@ A few example shredulers (schedulers) are provided:
 
 UGenShreduler:
 
-  This shreduler calculates an audio unit generator graph's
-  output in virtual time. The graph can be modified by
-  shreds all the while.
-
-  The graph is written in Ruby for flexibility, so it's
-  too slow (on my computer) for real time, so there is no
-  real-time playback. You can use WavOut, though.
-  (See examples/ugen/ex01.rb)
-
-  Check out the library of built-in unit generators in ugen/
-  and make your own.
-
-  Unit Generator Usage
-  ====================
-
-  Play a sine wave (examples/ugen/ex02.rb):
-
-    s = SinOsc.new(:freq => 440)
-    w = WavOut.new(:filename => "ex02.wav")
-    s >> w >> blackhole
-    play 3.seconds
-
-  Attach lambdas to unit generator attributes
-  (examples/ugen/ex03.rb):
-
-    wav = WavOut.new(:filename => "ex03.wav")
-    sin2 = SinOsc.new(:freq => 3)
-    sin = SinOsc.new(:freq => L{ sin2.last * 220 + 660 },
-                     :gain => L{ 0.5 + sin2.last * 0.5 })
-    [sin >> wav, sin2] >> blackhole
-    play 3.seconds
+  Recently moved to its own gem: ruck-ugen
 
 RealTimeShreduler
 

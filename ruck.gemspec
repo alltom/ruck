@@ -10,7 +10,6 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Tom Lieber"]
   s.date = %q{2010-07-10}
-  s.default_executable = %q{ruck_ugen}
   s.description = %q{      Ruck uses continuations and a simple scheduler to ensure "shreds"
       (Ruck threads) are woken at precisely the right time according
       to its virtual clock. Schedulers can map virtual time to samples
@@ -21,7 +20,6 @@ Gem::Specification.new do |s|
       are provided. See the README or the web page for details.
 }
   s.email = %q{tom@alltom.com}
-  s.executables = ["ruck_ugen"]
   s.extra_rdoc_files = [
     "README"
   ]
@@ -30,29 +28,8 @@ Gem::Specification.new do |s|
      "README",
      "Rakefile",
      "VERSION",
-     "bin/ruck_ugen",
-     "examples/ugen/ex01.rb",
-     "examples/ugen/ex02.rb",
-     "examples/ugen/ex03.rb",
-     "examples/ugen/ex04.rb",
-     "examples/ugen/ex05.rb",
-     "examples/ugen/ex06.rb",
-     "examples/ugen/ex07.rb",
-     "examples/ugen/ex08.rb",
-     "examples/ugen/ex09.rb",
-     "examples/ugen/ex10.rb",
-     "examples/ugen/ex11.rb",
      "lib/ruck.rb",
-     "lib/ruck/bench.rb",
-     "lib/ruck/misc/linkage.rb",
-     "lib/ruck/misc/riff.rb",
      "lib/ruck/shreduling.rb",
-     "lib/ruck/ugen.rb",
-     "lib/ruck/ugen/basic.rb",
-     "lib/ruck/ugen/oscillators.rb",
-     "lib/ruck/ugen/time_helpers.rb",
-     "lib/ruck/ugen/ugen.rb",
-     "lib/ruck/ugen/wav.rb",
      "ruck.gemspec"
   ]
   s.homepage = %q{http://github.com/alltom/ruck}
@@ -60,19 +37,6 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.6}
   s.summary = %q{strong timing for Ruby: cooperative threads on a virtual clock}
-  s.test_files = [
-    "examples/ugen/ex01.rb",
-     "examples/ugen/ex02.rb",
-     "examples/ugen/ex03.rb",
-     "examples/ugen/ex04.rb",
-     "examples/ugen/ex05.rb",
-     "examples/ugen/ex06.rb",
-     "examples/ugen/ex07.rb",
-     "examples/ugen/ex08.rb",
-     "examples/ugen/ex09.rb",
-     "examples/ugen/ex10.rb",
-     "examples/ugen/ex11.rb"
-  ]
 
   if s.respond_to? :specification_version then
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
