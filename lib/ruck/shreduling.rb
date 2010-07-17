@@ -17,11 +17,6 @@ module Ruck
     def go(resume)
       @resume = resume
       
-      # TODO
-      # I don't think this is the right place to catch errors.
-      # I've read the strangest memory errors after an exception
-      # is caught here; I have a feeling exceptions ought to be
-      # caught within the continuation itself.
       begin
         @block.call self
       rescue => e
