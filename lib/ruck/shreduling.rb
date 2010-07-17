@@ -117,9 +117,7 @@ module Ruck
       end
     end
 
-    # ruck main loop
-    # executes all shreds and synthesizes audio
-    #   until all shreds exit
+    # executes until all shreds exit
     def run
       LOG.debug "shreduler starting"
       @running = true
