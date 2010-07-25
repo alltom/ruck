@@ -5,4 +5,6 @@ module Ruck
   LOG.level = Logger::WARN
 end
 
-require File.join(File.dirname(__FILE__), "ruck", "shreduling")
+require File.join(File.dirname(__FILE__), "ruck", "clock")
+require File.join(File.dirname(__FILE__), "ruck", "shreduler")
+require File.join(File.dirname(__FILE__), "ruck", "shred")
