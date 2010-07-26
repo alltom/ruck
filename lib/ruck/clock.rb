@@ -3,13 +3,17 @@ require "rubygems"
 require "priority_queue"
 
 module Ruck
-  # Clock keeps track of events on a virtual timeline.
+  # Clock keeps track of events on a virtual timeline. Clocks can be
+  # configured to run fast or slow relative to another clock by
+  # changing their relative_rate and providing them a parent via
+  # add_child_clock.
   # 
   # Clocks and their sub-clocks are always at the same time; they
   # fast-forward in lock-step. You should not call fast_forward on
   # a clock with a parent.
   class Clock
     attr_reader :now # current time in this clock's units
+    attr_accessor :relative_rate # rate relative to parent clock
     
     def initialize(relative_rate = 1.0)
       @relative_rate = relative_rate
@@ -68,6 +72,7 @@ module Ruck
     
     protected
       
+      # returns [clock, [event, relative_time]]
       def next_event_with_clock
         possible = [] # set of clocks/events to find the min of
         
@@ -78,7 +83,7 @@ module Ruck
         
         # earliest event of each child, converting to absolute time
         possible += @children.map { |c| [c, c.next_event] }.map do |clock, (event, relative_time)|
-          [clock, [event, unscale_time(now + relative_time)]] if event
+          [clock, [event, unscale_relative_time(relative_time)]] if event
         end.compact
         
         possible.min do |(clock1, (event1, time1)), (clock2, (event2, time2))|
