@@ -59,6 +59,11 @@ module Ruck
       $shreduler.shredule(self, $shreduler.now + dt, clock)
       pause
     end
+    
+    def wait_on(event)
+      $shreduler.shredule(self, $shreduler.now, event)
+      pause
+    end
   end
   
   module KernelConvenienceMethods

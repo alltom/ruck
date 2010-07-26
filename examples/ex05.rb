@@ -18,8 +18,9 @@ end
 
 spork do |shred|
   loop do
-    shred.yield(0, @event)
+    shred.wait_on(@event)
     puts "YEE HAW!"
+    puts
   end
 end
 
