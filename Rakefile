@@ -20,6 +20,7 @@ begin
       are provided. See the README or the web page for details.
     EOF
     gem.has_rdoc = false
+    gem.add_dependency "PriorityQueue", ">= 0"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new
