@@ -13,12 +13,9 @@ end
 @shreduler = RealTimeShreduler.new
 @shreduler.make_convenient
 
-@event = EventClock.new
-@shreduler.clock.add_child_clock(@event)
-
 spork do |shred|
   loop do
-    shred.wait_on(@event)
+    shred.wait_on(:gogogo)
     puts "YEE HAW!"
     puts
   end
@@ -32,7 +29,7 @@ spork do |shred|
     puts "still not yet"
     shred.yield(1)
     puts "okay now!"
-    @event.raise_all
+    raise_event(:gogogo)
   end
 end
 

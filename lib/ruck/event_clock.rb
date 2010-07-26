@@ -5,7 +5,7 @@ module Ruck
     
     def initialize
       @now = 0
-      @waiting = []
+      @waiting = Hash.new { |hash, event| hash[event] = [] }
       @raised = []
     end
     
@@ -14,12 +14,12 @@ module Ruck
       @now += dt
     end
     
-    def schedule(obj, time = nil)
-      @waiting << obj
+    def schedule(obj, event = nil)
+      @waiting[event] << obj
     end
     
     def unschedule(obj)
-      @waiting.delete(obj)
+      @waiting.each { |event, objs| objs.delete(obj) }
       @raised.delete(obj)
     end
     
@@ -31,9 +31,9 @@ module Ruck
       [@raised.shift, 0] if @raised.length > 0
     end
     
-    def raise_all
-      @raised += @waiting
-      @waiting = []
+    def raise_all(event)
+      @raised += @waiting[event]
+      @waiting[event] = []
     end
   end
 end

@@ -2,9 +2,12 @@
 module Ruck
   class Shreduler
     attr_reader :clock
+    attr_reader :event_clock
     
     def initialize
       @clock = Clock.new
+      @event_clock = EventClock.new
+      @clock.add_child_clock(@event_clock)
     end
     
     def now
@@ -61,7 +64,7 @@ module Ruck
     end
     
     def wait_on(event)
-      $shreduler.shredule(self, $shreduler.now, event)
+      $shreduler.shredule(self, event, $shreduler.event_clock)
       pause
     end
   end
@@ -69,6 +72,10 @@ module Ruck
   module KernelConvenienceMethods
     def spork(&block)
       $shreduler.shredule(Shred.new(&block))
+    end
+    
+    def raise_event(event)
+      $shreduler.event_clock.raise_all(event)
     end
   end
 end
