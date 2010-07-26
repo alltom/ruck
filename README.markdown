@@ -77,15 +77,21 @@ time units to seconds:
 
 These gems provide shredulers with other interesting mappings:
 
-- ruck-realtime: the above example
+<dl>
+<dt>ruck-realtime</dt>
+<dd>the above example</dd>
 
-- ruck-midi: maps to quarter notes in a MIDI file, quarter
-  notes in real-time, or both simultaneously (playing back,
-  then saving to disk)
+<dt>ruck-midi</dt>
+<dd>maps to quarter notes in a MIDI file, quarter
+notes in real-time, or both simultaneously (playing back,
+then saving to disk)</dd>
 
-- ruck-ugen: maps to samples in an audio stream, providing a
-  simple unit generator framework for reading and writing WAV
-  files with effects
+<dt>ruck-ugen</dt>
+<dd>maps to samples in an audio stream, providing a
+simple unit generator framework for reading and writing WAV
+files with effects</dd>
 
-- ruck-glapp: maps to real-time, but embedded in an OpenGL
-  application
+<dt>ruck-glapp</dt>
+<dd>maps to real-time, but embedded in an OpenGL
+application</dd>
+</dl>
