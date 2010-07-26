@@ -75,7 +75,9 @@ time units to seconds:
       end
     end
 
-These gems provide shredulers with other interesting mappings:
+These gems provide shredulers with other interesting mappings,
+as well as defining convenient DSLs to make shreduling less
+verbose:
 
 <dl>
 <dt>ruck-realtime</dt>
