@@ -100,7 +100,7 @@ module Ruck
       # convert an offset from now in this clock's units to a time
       # delta from now in parent clock's units
       def unscale_relative_time(relative_time)
-        relative_time / @relative_rate
+        relative_time / @relative_rate.to_f
       end
   end
 end
