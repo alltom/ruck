@@ -3,6 +3,8 @@ require "rubygems"
 require "priority_queue"
 
 module Ruck
+  # Clock keeps track of events on a virtual timeline.
+  # 
   # Clocks and their sub-clocks are always at the same time; they
   # fast-forward in lock-step. You should not call fast_forward on
   # a clock with a parent.
@@ -13,7 +15,7 @@ module Ruck
       @relative_rate = relative_rate
       @now = 0
       @children = []
-      @shreds = PriorityQueue.new
+      @events = PriorityQueue.new
     end
     
     # fast-forward this clock and all children clocks by the given time delta
@@ -30,55 +32,56 @@ module Ruck
       clock
     end
     
-    def shredule(shred, time = nil)
-      @shreds[shred] = time || now
+    # schedules an event at the given time (defaulting to the current time)
+    def schedule(event, time = nil)
+      @events[event] = time || now
     end
     
-    # dequeues a shred from this clock or any child clocks. returns nil if
-    # the shred wasn't there, or its relative_time otherwise
-    def unshredule(shred)
-      if @shreds[shred]
-        shred, time = @shreds.delete shred
+    # dequeues an event from this clock or any child clocks. returns nil if
+    # the event wasn't there, or its relative_time otherwise
+    def unschedule(event)
+      if @events[event]
+        event, time = @events.delete event
         unscale_time(time)
       else
-        relative_time = @children.first_non_nil { |clock| clock.unshredule(shred) }
+        relative_time = @children.first_non_nil { |clock| clock.unschedule(event) }
         unscale_relative_time(relative_time) if relative_time
       end
     end
     
-    # returns [shred, relative_time], where relative_time is the offset from
+    # returns [event, relative_time], where relative_time is the offset from
     # now in parent's time units
-    def next_shred
-      clock, (shred, relative_time) = next_shred_with_clock
-      [shred, relative_time] if shred
+    def next_event
+      clock, (event, relative_time) = next_event_with_clock
+      [event, relative_time] if event
     end
     
-    # deshredules and returns [shred, relative_time], where relative_time is
-    # the offset from now in parent's time units
-    def unshredule_next_shred
-      clock, (shred, relative_time) = next_shred_with_clock
-      if shred
-        clock.unshredule(shred)
-        [shred, relative_time]
+    # unschedules and returns the next event, returning [event, relative_time],
+    # where relative_time is the offset from now in parent's time units
+    def unschedule_next_event
+      clock, (event, relative_time) = next_event_with_clock
+      if event
+        clock.unschedule(event)
+        [event, relative_time]
       end
     end
     
     protected
       
-      def next_shred_with_clock
-        possible = [] # set of clocks/shreds to find the min of
+      def next_event_with_clock
+        possible = [] # set of clocks/events to find the min of
         
-        if @shreds.length > 0
-          shred, time = @shreds.min
-          possible << [self, [shred, unscale_time(time)]]
+        if @events.length > 0
+          event, time = @events.min
+          possible << [self, [event, unscale_time(time)]]
         end
         
-        # min shred of each child, converting to absolute time
-        possible += @children.map { |c| [c, c.next_shred] }.map do |clock, (shred, relative_time)|
-          [clock, [shred, unscale_time(now + relative_time)]] if shred
+        # earliest event of each child, converting to absolute time
+        possible += @children.map { |c| [c, c.next_event] }.map do |clock, (event, relative_time)|
+          [clock, [event, unscale_time(now + relative_time)]] if event
         end.compact
         
-        possible.min do |(clock1, (shred1, time1)), (clock2, (shred2, time2))|
+        possible.min do |(clock1, (event1, time1)), (clock2, (event2, time2))|
           time1[1] <=> time2[1]
         end
       end

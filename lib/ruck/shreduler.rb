@@ -12,15 +12,15 @@ module Ruck
     end
     
     def shredule(shred, time = nil)
-      @clock.shredule(shred, time)
+      @clock.schedule(shred, time)
     end
     
     def unshredule(shred)
-      @clock.unshredule(shred)
+      @clock.unschedule(shred)
     end
     
     def run_one
-      shred, relative_time = @clock.unshredule_next_shred
+      shred, relative_time = @clock.unschedule_next_event
       return nil unless shred
       
       fast_forward(relative_time) if relative_time > 0
