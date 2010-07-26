@@ -97,3 +97,8 @@ files with effects</dd>
 <dd>maps to real-time, but embedded in an OpenGL
 application</dd>
 </dl>
+
+VERY IMPORTANT NOTE! ruck was recently rewritten and these
+other projects have not yet been updated! So I highly recommend
+using the v0.2 gems for them all as your source of documentation
+unless you're using ruck by itself!
