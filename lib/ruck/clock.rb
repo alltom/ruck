@@ -87,7 +87,7 @@ module Ruck
         end.compact
         
         possible.min do |(clock1, (event1, time1)), (clock2, (event2, time2))|
-          time1[1] <=> time2[1]
+          time1 <=> time2
         end
       end
       
