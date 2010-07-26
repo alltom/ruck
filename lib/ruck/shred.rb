@@ -16,7 +16,7 @@ module Ruck
     end
     
     # begin or resume execution
-    def go
+    def call
       return unless @proc
       
       callcc do |cont|
@@ -27,6 +27,10 @@ module Ruck
         @proc = nil
         @caller.call
       end
+    end
+    
+    def [](*args)
+      call
     end
     
     def finished

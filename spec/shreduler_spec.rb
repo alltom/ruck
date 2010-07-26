@@ -25,7 +25,7 @@ class MockShred
     "MockShred<#{@name}>"
   end
   
-  def go
+  def call
     $runs << self
     @runs_until_finished -= 1
     @finished = (@runs_until_finished == 0)

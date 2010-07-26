@@ -27,7 +27,7 @@ module Ruck
       
       begin
         @current_shred = shred
-        shred.go
+        shred.call
       ensure
         @current_shred = nil
       end

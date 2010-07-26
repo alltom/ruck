@@ -4,18 +4,18 @@ require "ruck"
 include Ruck
 
 describe Shred do
-  context "when calling go" do
+  context "when calling call" do
     it "should execute the given block" do
       $ran = false
       @shred = Shred.new { $ran = true }
-      @shred.go
+      @shred.call
       $ran.should == true
     end
     
     it "should pass itself to the block" do
       $passed_shred = nil
       @shred = Shred.new { |s| $passed_shred = s }
-      @shred.go
+      @shred.call
       $passed_shred.should == @shred
     end
     
@@ -28,16 +28,16 @@ describe Shred do
         $ran = 2
       end
       
-      @shred.go
+      @shred.call
       $ran.should == 1
-      @shred.go
+      @shred.call
       $ran.should == 2
     end
     
     it "should not mind if you run it to many times" do
       @shred = Shred.new { }
-      @shred.go
-      @shred.go
+      @shred.call
+      @shred.call
     end
   end
 end
