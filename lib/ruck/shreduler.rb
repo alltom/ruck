@@ -11,8 +11,8 @@ module Ruck
       @clock.now
     end
     
-    def shredule(shred, time = nil)
-      @clock.schedule(shred, time)
+    def shredule(shred, time = nil, clock = nil)
+      (clock || @clock).schedule(shred, time)
     end
     
     def unshredule(shred)
