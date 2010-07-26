@@ -1,48 +1,91 @@
 A port of ChucK's strong timing to Ruby!
 
-ruck lets you easily create a virtual clock against
-which precise timing of execution can be guaranteed. The
-virtual clock can be kept roughly in sync with real time
-if you want it to, but you don't have to. For example, in
-ChucK, even if your scripts take too long to generate
-samples in real time, the audio stream isn't compromised
-because it's timed against the virtual clock.
+ruck lets you create virtual timelines on which you can
+precisely time the execution of events.
 
-ruck provides an easily extended scheduler for non-preemptive
-shreds (threads) implemented using continuations.
-Cooperatively scheduled threads usually don't require
-synchronization since execution is never interrupted.
+This is accomplished using Shred, Clock, and Shreduler:
 
-A few example shredulers (schedulers) are provided:
+- Shred: a resumable Proc
+- Clock: manages events on a timeline
+- Shreduler: executes shreds on time
 
-UGenShreduler:
+Here's an example of how to use Shred:
 
-  Recently moved to its own gem: ruck-ugen
+  shred = Shred.new do |shred|
+    puts "A"
+    shred.pause
+    puts "B"
+    shred.pause
+    puts "C"
+  end
+  
+  shred.call
+  shred.call
+  shred.call
 
-RealTimeShreduler
+Here's how Clock works:
 
-  Recently moved to its own gem: ruck-realtime
+  clock = Clock.new
+  
+  clock.schedule("C", 3)
+  clock.schedule("B", 2)
+  clock.schedule("A", 1)
+  
+  3.times do
+    letter, time = clock.unschedule_next_event
+    puts "#{letter} @ #{time}"
+  end
 
-MIDIShreduler
+Here's how these two are combined with Shreduler:
 
-  Recently moved to its own gem: ruck-midi
+  @shreduler = Shreduler.new
+  
+  @shreduler.shredule(Shred.new do |shred|
+    %w{ A B C D E }.each do |letter|
+      puts "#{letter}"
+      @shreduler.shredule(shred, @shreduler.now + 1)
+      shred.pause
+    end
+  end)
+  
+  @shreduler.shredule(Shred.new do |shred|
+    %w{ 1 2 3 4 5 }.each do |number|
+      puts "#{number}"
+      @shreduler.shredule(shred, @shreduler.now + 1)
+      shred.pause
+    end
+  end)
+  
+  @shreduler.run
 
-GLAppShreduler
+ruck doesn't specify any behavior for when time passes,
+so by default all shreds are executed as fast as possible
+as they're drained from the queue. In other words, there's
+no mapping from virtual time to anything else, so Shreduler
+only really cares about order.
 
-  You don't want to know. But see ruck-glapp if you do.
+You change this by sub-classes Shreduler and overriding its
+methods. For example, an easy modification is to map the
+time units to seconds:
 
-USAGE
-=====
+  class RealTimeShreduler < Shreduler
+    def fast_forward(dt)
+      super
+      sleep(dt)
+    end
+  end
 
-This project has tons of examples because even though the library
-is tiny, there's a lot to test, and a lot of ways to use it.
+These gems provide shredulers with other interesting mappings:
 
-For examples of how to implement your own Shreduler, see the bottom
-of lib/ruck/shreduling.rb and all the scripts in bin/.
+- ruck-realtime: the above example
 
-For example of how to use the provided Shredulers, check the
-examples/ directory. Those scripts contain no boilerplate includes
-because they are written to be invoked on the command line by
-one of the bin/ scripts. For example:
+- ruck-midi: maps to quarter notes in a MIDI file, quarter
+  notes in real-time, or both simultaneously (playing back,
+  then saving to disk)
 
-  $ ruck_ugen examples/ugen/ex01.rb
+- ruck-ugen: maps to samples in an audio stream, providing a
+  simple unit generator framework for reading and writing WAV
+  files with effects
+
+- ruck-glapp: maps to real-time, but embedded in an OpenGL
+  application

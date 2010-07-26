@@ -3,14 +3,33 @@ require "rubygems"
 require "priority_queue"
 
 module Ruck
+  
   # Clock keeps track of events on a virtual timeline. Clocks can be
   # configured to run fast or slow relative to another clock by
   # changing their relative_rate and providing them a parent via
   # add_child_clock.
   # 
-  # Clocks and their sub-clocks are always at the same time; they
-  # fast-forward in lock-step. You should not call fast_forward on
-  # a clock with a parent.
+  # Clocks and their sub-clocks always tell the same time. When
+  # fast_forward is called, they advance in lock-step. You should only
+  # call fast_forward on the root of any tree of Clocks.
+  # 
+  # = A note about fast_forward and time travel
+  # 
+  # When using a Clock with no children, there's little reason to ever
+  # call fast_forward because in that case Clock is little more than
+  # a priority queue. When using a Clock with children, before ever
+  # changing a Clock's relative_rate, you should fast_forward to the
+  # VIRTUAL instant that change is meant to take place. This ensures
+  # that the change happens at that time and future events are
+  # scheduled correctly.
+  # 
+  # (For an example of why this is important, consider two connected
+  # clocks, where the child's relative_rate is 1.0. If 5 time units in,
+  # the relative_rate is changed to 5,000 and fast_forward(5) isn't
+  # called, the first 5 time units of the child's clock are also
+  # affected by the change, and some events will afterward occur at
+  # t < 5.)
+  
   class Clock
     attr_reader :now # current time in this clock's units
     attr_accessor :relative_rate # rate relative to parent clock
