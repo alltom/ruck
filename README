@@ -6,7 +6,7 @@ precisely time the execution of events.
 This is accomplished using Shred, Clock, and Shreduler:
 
 - Shred: a resumable Proc
-- Clock: manages events on a timeline
+- Clock: manages occurrences on a timeline
 - Shreduler: executes shreds on time
 
 Here's an example of how to use Shred:
@@ -32,7 +32,7 @@ Here's how Clock works:
   clock.schedule("A", 1)
   
   3.times do
-    letter, time = clock.unschedule_next_event
+    letter, time = clock.unschedule_next
     puts "#{letter} @ #{time}"
   end
 
