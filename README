@@ -11,7 +11,7 @@ This is accomplished using Shred, Clock, and Shreduler:
 
 Here's an example of how to use Shred:
 
-  shred = Shred.new do |shred|
+  shred = Ruck::Shred.new do |shred|
     puts "A"
     shred.pause
     puts "B"
@@ -25,7 +25,7 @@ Here's an example of how to use Shred:
 
 Here's how Clock works:
 
-  clock = Clock.new
+  clock = Ruck::Clock.new
   
   clock.schedule("C", 3)
   clock.schedule("B", 2)
@@ -38,9 +38,9 @@ Here's how Clock works:
 
 Here's how these two are combined with Shreduler:
 
-  @shreduler = Shreduler.new
+  @shreduler = Ruck::Shreduler.new
   
-  @shreduler.shredule(Shred.new do |shred|
+  @shreduler.shredule(Ruck::Shred.new do |shred|
     %w{ A B C D E }.each do |letter|
       puts "#{letter}"
       @shreduler.shredule(shred, @shreduler.now + 1)
@@ -48,7 +48,7 @@ Here's how these two are combined with Shreduler:
     end
   end)
   
-  @shreduler.shredule(Shred.new do |shred|
+  @shreduler.shredule(Ruck::Shred.new do |shred|
     %w{ 1 2 3 4 5 }.each do |number|
       puts "#{number}"
       @shreduler.shredule(shred, @shreduler.now + 1)
@@ -68,7 +68,7 @@ You change this by sub-classes Shreduler and overriding its
 methods. For example, an easy modification is to map the
 time units to seconds:
 
-  class RealTimeShreduler < Shreduler
+  class RealTimeShreduler < Ruck::Shreduler
     def fast_forward(dt)
       super
       sleep(dt)
