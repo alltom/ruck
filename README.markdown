@@ -68,12 +68,12 @@ You change this by sub-classes Shreduler and overriding its
 methods. For example, an easy modification is to map the
 time units to seconds:
 
-  class RealTimeShreduler < Shreduler
-    def fast_forward(dt)
-      super
-      sleep(dt)
+    class RealTimeShreduler < Shreduler
+      def fast_forward(dt)
+        super
+        sleep(dt)
+      end
     end
-  end
 
 These gems provide shredulers with other interesting mappings:
 
