@@ -39,10 +39,31 @@ module Ruck
       loop { return unless run_one }
     end
     
+    # makes this the global shreduler
+    def make_convenient
+      $shreduler = self
+      
+      Shred.module_eval { include ShredConvenienceMethods }
+      Object.module_eval { include KernelConvenienceMethods }
+    end
+    
     protected
       
       def fast_forward(dt)
         @clock.fast_forward(dt)
       end
+  end
+  
+  module ShredConvenienceMethods
+    def yield(dt, clock = nil)
+      $shreduler.shredule(self, $shreduler.now + dt, clock)
+      pause
+    end
+  end
+  
+  module KernelConvenienceMethods
+    def spork(&block)
+      $shreduler.shredule(Shred.new(&block))
+    end
   end
 end
