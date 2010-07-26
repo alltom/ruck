@@ -4,9 +4,9 @@ require "priority_queue"
 
 module Ruck
   
-  # Clock keeps track of events on a virtual timeline. Clocks can be
-  # configured to run fast or slow relative to another clock by
-  # changing their relative_rate and providing them a parent via
+  # Clock keeps track of occurrences on a virtual timeline. Clocks
+  # can be configured to run fast or slow relative to another clock
+  # by changing their relative_rate and providing them a parent via
   # add_child_clock.
   # 
   # Clocks and their sub-clocks always tell the same time. When
@@ -20,15 +20,15 @@ module Ruck
   # a priority queue. When using a Clock with children, before ever
   # changing a Clock's relative_rate, you should fast_forward to the
   # VIRTUAL instant that change is meant to take place. This ensures
-  # that the change happens at that time and future events are
+  # that the change happens at that time and future occurrences are
   # scheduled correctly.
   # 
   # (For an example of why this is important, consider two connected
   # clocks, where the child's relative_rate is 1.0. If 5 time units in,
   # the relative_rate is changed to 5,000 and fast_forward(5) isn't
   # called, the first 5 time units of the child's clock are also
-  # affected by the change, and some events will afterward occur at
-  # t < 5.)
+  # affected by the change, and some occurrences could afterward take
+  # place at t < 5.)
   
   class Clock
     attr_reader :now # current time in this clock's units
@@ -38,7 +38,7 @@ module Ruck
       @relative_rate = relative_rate
       @now = 0
       @children = []
-      @events = PriorityQueue.new
+      @occurrences = PriorityQueue.new
     end
     
     # fast-forward this clock and all children clocks by the given time delta
@@ -55,57 +55,58 @@ module Ruck
       clock
     end
     
-    # schedules an event at the given time (defaulting to the current time)
-    def schedule(event, time = nil)
-      @events[event] = time || now
+    # schedules an occurrence at the given time with the given object,
+    # defaulting to the current time
+    def schedule(obj, time = nil)
+      @occurrences[obj] = time || now
     end
     
-    # dequeues an event from this clock or any child clocks. returns nil if
-    # it wasn't there, or its relative_time otherwise
-    def unschedule(event)
-      if @events[event]
-        event, time = @events.delete event
+    # dequeues the earliest occurrence from this clock or any child clocks.
+    # returns nil if it wasn't there, or its relative_time otherwise
+    def unschedule(obj)
+      if @occurrences[obj]
+        obj, time = @occurrences.delete obj
         unscale_time(time)
       else
-        relative_time = @children.first_non_nil { |clock| clock.unschedule(event) }
+        relative_time = @children.first_non_nil { |clock| clock.unschedule(obj) }
         unscale_relative_time(relative_time) if relative_time
       end
     end
     
-    # returns [event, relative_time], where relative_time is the offset from
+    # returns [obj, relative_time], where relative_time is the offset from
     # now in parent's time units
     def next
-      clock, (event, relative_time) = next_with_clock
-      [event, relative_time] if event
+      clock, (obj, relative_time) = next_with_clock
+      [obj, relative_time] if obj
     end
     
-    # unschedules and returns the next event, returning [event, relative_time],
+    # unschedules and returns the next object as [obj, relative_time],
     # where relative_time is the offset from now in parent's time units
     def unschedule_next
-      clock, (event, relative_time) = next_with_clock
-      if event
-        clock.unschedule(event)
-        [event, relative_time]
+      clock, (obj, relative_time) = next_with_clock
+      if obj
+        clock.unschedule(obj)
+        [obj, relative_time]
       end
     end
     
     protected
       
-      # returns [clock, [event, relative_time]]
+      # returns [clock, [obj, relative_time]]
       def next_with_clock
-        possible = [] # set of clocks/events to find the min of
+        possible = [] # set of clocks/objs to find the min of
         
-        if @events.length > 0
-          event, time = @events.min
-          possible << [self, [event, unscale_time(time)]]
+        if @occurrences.length > 0
+          obj, time = @occurrences.min
+          possible << [self, [obj, unscale_time(time)]]
         end
         
-        # earliest event of each child, converting to absolute time
-        possible += @children.map { |c| [c, c.next] }.map do |clock, (event, relative_time)|
-          [clock, [event, unscale_relative_time(relative_time)]] if event
+        # earliest occurrence of each child, converting to absolute time
+        possible += @children.map { |c| [c, c.next] }.map do |clock, (obj, relative_time)|
+          [clock, [obj, unscale_relative_time(relative_time)]] if obj
         end.compact
         
-        possible.min do |(clock1, (event1, time1)), (clock2, (event2, time2))|
+        possible.min do |(clock1, (obj1, time1)), (clock2, (obj2, time2))|
           time1 <=> time2
         end
       end
