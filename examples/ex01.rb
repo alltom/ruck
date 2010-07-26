@@ -19,9 +19,9 @@ shred2 = Shred.new do |shred|
   puts "3"
 end
 
-shred1.go
-shred2.go
-shred1.go
-shred2.go
-shred1.go
-shred2.go
+shred1.call
+shred2.call
+shred1.call
+shred2.call
+shred1.call
+shred2.call
