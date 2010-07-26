@@ -20,7 +20,7 @@ module Ruck
     end
     
     def run_one
-      shred, relative_time = @clock.unschedule_next_event
+      shred, relative_time = @clock.unschedule_next
       return nil unless shred
       
       fast_forward(relative_time) if relative_time > 0

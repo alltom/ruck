@@ -13,7 +13,7 @@ module Ruck
   # fast_forward is called, they advance in lock-step. You should only
   # call fast_forward on the root of any tree of Clocks.
   # 
-  # = A note about fast_forward and time travel
+  # = A warning about fast_forward and time travel
   # 
   # When using a Clock with no children, there's little reason to ever
   # call fast_forward because in that case Clock is little more than
@@ -61,7 +61,7 @@ module Ruck
     end
     
     # dequeues an event from this clock or any child clocks. returns nil if
-    # the event wasn't there, or its relative_time otherwise
+    # it wasn't there, or its relative_time otherwise
     def unschedule(event)
       if @events[event]
         event, time = @events.delete event
@@ -74,15 +74,15 @@ module Ruck
     
     # returns [event, relative_time], where relative_time is the offset from
     # now in parent's time units
-    def next_event
-      clock, (event, relative_time) = next_event_with_clock
+    def next
+      clock, (event, relative_time) = next_with_clock
       [event, relative_time] if event
     end
     
     # unschedules and returns the next event, returning [event, relative_time],
     # where relative_time is the offset from now in parent's time units
-    def unschedule_next_event
-      clock, (event, relative_time) = next_event_with_clock
+    def unschedule_next
+      clock, (event, relative_time) = next_with_clock
       if event
         clock.unschedule(event)
         [event, relative_time]
@@ -92,7 +92,7 @@ module Ruck
     protected
       
       # returns [clock, [event, relative_time]]
-      def next_event_with_clock
+      def next_with_clock
         possible = [] # set of clocks/events to find the min of
         
         if @events.length > 0
@@ -101,7 +101,7 @@ module Ruck
         end
         
         # earliest event of each child, converting to absolute time
-        possible += @children.map { |c| [c, c.next_event] }.map do |clock, (event, relative_time)|
+        possible += @children.map { |c| [c, c.next] }.map do |clock, (event, relative_time)|
           [clock, [event, unscale_relative_time(relative_time)]] if event
         end.compact
         
