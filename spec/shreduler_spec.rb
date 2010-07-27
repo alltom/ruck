@@ -4,7 +4,6 @@ require "ruck"
 include Ruck
 
 class MockShred
-  attr_reader :finished
   attr_reader :runs
   
   def self.next_name
@@ -30,6 +29,10 @@ class MockShred
     @runs_until_finished -= 1
     @finished = (@runs_until_finished == 0)
     @shreduler.shredule(self) unless @finished || @shreduler == nil
+  end
+  
+  def finished?
+    @finished
   end
 end
 

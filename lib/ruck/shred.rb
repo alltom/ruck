@@ -12,7 +12,6 @@ module Ruck
   class Shred
     def initialize(&block)
       @proc = block || Proc.new{}
-      @finished = false
     end
     
     # pause execution by saving this execution point and returning
@@ -42,7 +41,7 @@ module Ruck
       call
     end
     
-    def finished
+    def finished?
       @proc.nil?
     end
   end
