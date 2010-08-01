@@ -16,6 +16,7 @@ module Ruck
     
     def shredule(shred, time = nil, clock = nil)
       (clock || @clock).schedule(shred, time)
+      shred
     end
     
     def unshredule(shred)
