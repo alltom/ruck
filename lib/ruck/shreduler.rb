@@ -47,7 +47,22 @@ module Ruck
       loop { return unless run_one }
     end
     
-    # makes this the global shreduler
+    def run_until(target_time)
+      return if target_time < now
+      
+      loop do
+        shred, relative_time = next_shred
+        break unless shred
+        break unless now + relative_time <= target_time
+        run_one
+      end
+      
+      # I hope rounding errors are okay
+      fast_forward(target_time - now)
+    end
+    
+    # makes this the global shreduler, adding convenience methods to
+    # Object and Shred to make it easier to use
     def make_convenient
       $shreduler = self
       
