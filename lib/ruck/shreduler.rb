@@ -48,7 +48,7 @@ module Ruck
       $shreduler = self
       
       Shred.module_eval { include ShredConvenienceMethods }
-      Object.module_eval { include KernelConvenienceMethods }
+      Object.module_eval { include ObjectConvenienceMethods }
     end
     
     protected
@@ -70,7 +70,7 @@ module Ruck
     end
   end
   
-  module KernelConvenienceMethods
+  module ObjectConvenienceMethods
     def spork(&block)
       $shreduler.shredule(Shred.new(&block))
     end
