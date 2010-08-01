@@ -9,7 +9,7 @@ module Ruck
   # If #pause is called anywhere but inside the given block, I can
   # almost guarantee that strange things will happen.
   
-  class Shred
+  class CallccShred
     def initialize(&block)
       @proc = block || Proc.new{}
     end
@@ -47,6 +47,44 @@ module Ruck
     
     def kill
       @proc = nil
+    end
+  end
+  
+  class FiberShred
+    def initialize(&block)
+      @fiber = Fiber.new(&block)
+    end
+    
+    def pause
+      Fiber.yield
+    end
+    
+    def call
+      return unless @fiber
+      @fiber.resume(self)
+    rescue FiberError
+      @fiber = nil
+    end
+    
+    def [](*args)
+      call
+    end
+    
+    def finished?
+      @fiber.nil?
+    end
+    
+    def kill
+      @fiber = nil
+    end
+  end
+  
+  # Fiber was introduced in Ruby 1.9
+  if defined? Fiber
+    class Shred < FiberShred
+    end
+  else
+    class Shred < CallccShred
     end
   end
 end

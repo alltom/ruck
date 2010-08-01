@@ -39,5 +39,50 @@ describe Shred do
       @shred.call
       @shred.call
     end
+    
+    it "should let you use [] instead of #call" do
+      $ran = false
+      @shred = Shred.new { $ran = true }
+      @shred[]
+      $ran.should == true
+    end
+  end
+  
+  context "when killing" do
+    it "should not resume the next time you call it" do
+      $ran = 0
+      
+      @shred = Shred.new do |shred|
+        $ran = 1
+        shred.pause
+        $ran = 2
+      end
+      
+      @shred.call
+      $ran.should == 1
+      @shred.kill
+      @shred.call
+      $ran.should == 1
+    end
+  end
+  
+  context "when checking finished?" do
+    it "should be false just after creation" do
+      @shred = Shred.new { }
+      @shred.finished?.should be_false
+    end
+    
+    it "should be true just after executing the shred for the last time" do
+      pending "not yet supported in Ruby 1.9 because Fiber#alive? is missing"
+      @shred = Shred.new { }
+      @shred.call
+      @shred.finished?.should be_true
+    end
+    
+    it "should be true just after killing the shred" do
+      @shred = Shred.new { }
+      @shred.kill
+      @shred.finished?.should be_true
+    end
   end
 end
