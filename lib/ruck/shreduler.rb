@@ -23,6 +23,10 @@ module Ruck
       @clock.unschedule(shred)
     end
     
+    def raise_all(event)
+      event_clock.raise_all(event)
+    end
+    
     def run_one
       shred, relative_time = @clock.unschedule_next
       return nil unless shred
@@ -55,6 +59,10 @@ module Ruck
       
       def fast_forward(dt)
         @clock.fast_forward(dt)
+      end
+      
+      def next_shred
+        clock.next
       end
   end
   
