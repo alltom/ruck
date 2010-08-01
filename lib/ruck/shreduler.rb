@@ -75,6 +75,10 @@ module Ruck
       $shreduler.shredule(Shred.new(&block))
     end
     
+    def spork_loop(&block)
+      $shreduler.shredule(Ruck::Shred.new { |shred| loop { block.call(shred) } })
+    end
+    
     def raise_event(event)
       $shreduler.event_clock.raise_all(event)
     end
