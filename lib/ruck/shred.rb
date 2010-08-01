@@ -44,5 +44,9 @@ module Ruck
     def finished?
       @proc.nil?
     end
+    
+    def kill
+      @proc = nil
+    end
   end
 end
