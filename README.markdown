@@ -22,6 +22,11 @@ Here's an example of how to use Shred:
     shred.call
     shred.call
     shred.call
+    
+    # prints:
+    # A
+    # B
+    # C
 
 Here's how Clock works:
 
@@ -35,6 +40,11 @@ Here's how Clock works:
       letter, time = clock.unschedule_next
       puts "#{letter} @ #{time}"
     end
+    
+    # prints:
+    # A @ 1.0
+    # B @ 2.0
+    # C @ 3.0
 
 Here's how these two are combined with Shreduler:
 
@@ -57,6 +67,18 @@ Here's how these two are combined with Shreduler:
     end)
     
     @shreduler.run
+    
+    # prints
+    # A
+    # 1
+    # B
+    # 2
+    # C
+    # 3
+    # D
+    # 4
+    # E
+    # 5
 
 ruck doesn't specify any behavior for when time passes,
 so by default all shreds are executed as fast as possible

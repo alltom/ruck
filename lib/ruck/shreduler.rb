@@ -76,6 +76,7 @@ module Ruck
     
     protected
       
+      # if you override this method, you should probably call super
       def fast_forward(dt)
         @clock.fast_forward(dt)
       end

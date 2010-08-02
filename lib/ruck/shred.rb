@@ -37,19 +37,23 @@ module Ruck
       end
     end
     
+    # alias for call. It takes arguments, but ignores them.
     def [](*args)
       call
     end
     
+    # returns true if calling this Shred again will have no effect
     def finished?
       @proc.nil?
     end
     
+    # makes it so calling this Shred in the future will have no effect
     def kill
       @proc = nil
     end
   end
   
+  # See the documentation for CallccShred
   class FiberShred
     def initialize(&block)
       @fiber = Fiber.new(&block)
@@ -79,7 +83,9 @@ module Ruck
     end
   end
   
-  # Fiber was introduced in Ruby 1.9
+  # Fiber was introduced in Ruby 1.9 and supports a cleaner implementation
+  # of Shred than the callcc-based version, but I would like to support
+  # Ruby 1.8 as well.
   if defined? Fiber
     class Shred < FiberShred
     end
