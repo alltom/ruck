@@ -33,7 +33,7 @@ module Ruck
     
     def raise_all(event)
       @raised += @waiting[event]
-      @waiting[event] = []
+      @waiting[event].clear
     end
   end
 end
