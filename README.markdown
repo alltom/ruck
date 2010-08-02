@@ -105,7 +105,7 @@ concisely:
 
     @shreduler.run
 
-# Shredulers and time
+## Shredulers and time
 
 ruck doesn't specify any behavior for when time passes,
 so by default all shreds are executed as fast as possible
@@ -124,7 +124,7 @@ time units to seconds:
       end
     end
 
-# Useful Shredulers
+## Useful Shredulers
 
 These gems provide shredulers with other interesting mappings,
 as well as defining convenient DSLs to make shreduling less
