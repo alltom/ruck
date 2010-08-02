@@ -64,7 +64,7 @@ as they're drained from the queue. In other words, there's
 no mapping from virtual time to anything else, so Shreduler
 only really cares about order.
 
-You change this by sub-classes Shreduler and overriding its
+You change this by sub-classing Shreduler and overriding its
 methods. For example, an easy modification is to map the
 time units to seconds:
 
