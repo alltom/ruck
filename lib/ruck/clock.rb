@@ -94,21 +94,22 @@ module Ruck
       
       # returns [clock, [obj, relative_time]]
       def next_with_clock
-        possible = [] # set of clocks/objs to find the min of
+        min = nil
         
         if @occurrences.length > 0
           obj, time = @occurrences.min
-          possible << [self, [obj, unscale_time(time)]]
+          min = [self, [obj, unscale_time(time)]]
         end
         
         # earliest occurrence of each child, converting to absolute time
-        possible += @children.map { |c| [c, c.next] }.map do |clock, (obj, relative_time)|
-          [clock, [obj, unscale_relative_time(relative_time)]] if obj
-        end.compact
-        
-        possible.min do |(clock1, (obj1, time1)), (clock2, (obj2, time2))|
-          time1 <=> time2
+        @children.each do |child_clock|
+          obj, relative_time = child_clock.next
+          next unless obj
+          relative_time = unscale_relative_time(relative_time)
+          min = [child_clock, [obj, relative_time]] if min.nil? || relative_time < min[1][1]
         end
+        
+        min
       end
       
       # convert an absolute time in this clock's units to an offset from
