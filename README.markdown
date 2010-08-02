@@ -80,6 +80,33 @@ Here's how these two are combined with Shreduler:
     # E
     # 5
 
+Though this is somewhat inconvenient to use, so when you're
+using just one global Shreduler, you can call
+Shreduler#make_convenient, which adds useful methods to Object
+and Shred so that you can write the above example more
+concisely:
+
+    @shreduler = Ruck::Shreduler.new
+    @shreduler.make_convenient
+
+    spork do |shred|
+      %w{ A B C D E }.each do |letter|
+        puts "#{letter}"
+        shred.yield(1)
+      end
+    end
+
+    spork do |shred|
+      %w{ 1 2 3 4 5 }.each do |number|
+        puts "#{number}"
+        shred.yield(1)
+      end
+    end
+
+    @shreduler.run
+
+# Shredulers and time
+
 ruck doesn't specify any behavior for when time passes,
 so by default all shreds are executed as fast as possible
 as they're drained from the queue. In other words, there's
@@ -96,6 +123,8 @@ time units to seconds:
         sleep(dt)
       end
     end
+
+# Useful Shredulers
 
 These gems provide shredulers with other interesting mappings,
 as well as defining convenient DSLs to make shreduling less
