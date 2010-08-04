@@ -31,7 +31,7 @@ module Ruck
     end
     
     # begin or resume execution
-    def call
+    def call(*args)
       return unless @proc
       
       callcc do |cont|
@@ -39,7 +39,7 @@ module Ruck
         
         begin
           @@current_shreds << self
-          @proc.call self
+          @proc.call *args
         ensure
           @@current_shreds.pop
         end
@@ -52,7 +52,7 @@ module Ruck
     
     # alias for call. It takes arguments, but ignores them.
     def [](*args)
-      call
+      call(*args)
     end
     
     # returns true if calling this Shred again will have no effect
@@ -82,10 +82,10 @@ module Ruck
       Fiber.yield
     end
     
-    def call
+    def call(*args)
       return unless @fiber
       @@current_shreds << self
-      @fiber.resume(self)
+      @fiber.resume *args
     rescue FiberError
       @fiber = nil
     ensure
@@ -93,7 +93,7 @@ module Ruck
     end
     
     def [](*args)
-      call
+      call(*args)
     end
     
     def finished?

@@ -12,19 +12,22 @@ describe Shred do
       $ran.should == true
     end
     
-    it "should pass itself to the block" do
-      $passed_shred = nil
-      @shred = Shred.new { |s| $passed_shred = s }
-      @shred.call
-      $passed_shred.should == @shred
+    it "should pass the arguments to the shred" do
+      $ran = false
+      @shred = Shred.new do |x|
+        x.should == 42
+        $ran = true
+      end
+      @shred.call(42)
+      $ran.should be_true
     end
     
     it "should resume execution" do
       $ran = 0
       
-      @shred = Shred.new do |shred|
+      @shred = Shred.new do
         $ran = 1
-        shred.pause
+        Shred.current.pause
         $ran = 2
       end
       
@@ -34,7 +37,7 @@ describe Shred do
       $ran.should == 2
     end
     
-    it "should not mind if you run it to many times" do
+    it "should not mind if you run it too many times" do
       @shred = Shred.new { }
       @shred.call
       @shred.call
@@ -52,9 +55,9 @@ describe Shred do
     it "should not resume the next time you call it" do
       $ran = 0
       
-      @shred = Shred.new do |shred|
+      @shred = Shred.new do
         $ran = 1
-        shred.pause
+        Shred.current.pause
         $ran = 2
       end
       

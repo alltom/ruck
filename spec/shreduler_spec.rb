@@ -143,12 +143,12 @@ describe Shreduler do
     context "when scheduling with spork_loop" do
       it "should let you schedule a looping shred with spork_loop" do
         $ran = 0
-        spork_loop do |shred|
+        spork_loop do
           $ran += 1
           if $ran == 3
-            shred.kill
+            Shred.current.kill
           else
-            shred.yield(0)
+            Shred.current.yield(0)
           end
         end
         
@@ -158,9 +158,9 @@ describe Shreduler do
       
       it "should let you specify an amount to automatically yield after each run" do
         $ran = 0
-        spork_loop(1) do |shred|
+        spork_loop(1) do
           $ran += 1
-          shred.kill if $ran == 3
+          Shred.current.kill if $ran == 3
         end
         
         @shreduler.run
