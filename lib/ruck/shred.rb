@@ -10,6 +10,12 @@ module Ruck
   # almost guarantee that strange things will happen.
   
   class CallccShred
+    @@current_shreds = []
+    
+    def self.current_shred
+      @@current_shreds.last
+    end
+    
     def initialize(&block)
       @proc = block || Proc.new{}
     end
@@ -29,7 +35,13 @@ module Ruck
       
       callcc do |cont|
         @caller = cont
-        @proc.call self
+        
+        begin
+          @@current_shreds << self
+          @proc.call self
+        ensure
+          @@current_shreds.pop
+        end
         
         # if we made it here, we're done
         @proc = nil
@@ -55,6 +67,12 @@ module Ruck
   
   # See the documentation for CallccShred
   class FiberShred
+    @@current_shreds = []
+    
+    def self.current_shred
+      @@current_shreds.last
+    end
+    
     def initialize(&block)
       @fiber = Fiber.new(&block)
     end
@@ -65,9 +83,12 @@ module Ruck
     
     def call
       return unless @fiber
+      @@current_shreds << self
       @fiber.resume(self)
     rescue FiberError
       @fiber = nil
+    ensure
+      @@current_shreds.pop
     end
     
     def [](*args)
