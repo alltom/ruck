@@ -4,8 +4,6 @@ require "ruck"
 include Ruck
 
 class MockShred
-  attr_reader :runs
-  
   def self.next_name
     @@next_name ||= "a"
     name = @@next_name
@@ -124,6 +122,51 @@ describe Shreduler do
       @shreduler.unshredule(@shred)
       @shreduler.run
       $runs.should == []
+    end
+  end
+  
+  context "when convenient" do
+    before(:each) do
+      @shreduler = Shreduler.new
+      @shreduler.make_convenient
+    end
+    
+    context "when scheduling with spork" do
+      it "should let you schedule with spork" do
+        $ran = false
+        spork { $ran = true }
+        @shreduler.run
+        $ran.should be_true
+      end
+    end
+    
+    context "when scheduling with spork_loop" do
+      it "should let you schedule a looping shred with spork_loop" do
+        $ran = 0
+        spork_loop do |shred|
+          $ran += 1
+          if $ran == 3
+            shred.kill
+          else
+            shred.yield(0)
+          end
+        end
+        
+        @shreduler.run
+        $ran.should == 3
+      end
+      
+      it "should let you specify an amount to automatically yield after each run" do
+        $ran = 0
+        spork_loop(1) do |shred|
+          $ran += 1
+          shred.kill if $ran == 3
+        end
+        
+        @shreduler.run
+        $ran.should == 3
+        @shreduler.now.should == 2
+      end
     end
   end
 end

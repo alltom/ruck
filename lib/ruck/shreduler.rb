@@ -113,9 +113,22 @@ module Ruck
     # given, a shred.yield(delay) is inserted after the call to your block.
     def spork_loop(delay = nil, &block)
       if delay
-        $shreduler.shredule(Ruck::Shred.new { |shred| loop { block.call(shred); shred.yield(delay) } })
+        shred = Shred.new do |shred|
+          loop do
+            block.call(shred)
+            break if shred.finished?
+            shred.yield(delay)
+          end
+        end
+        $shreduler.shredule(shred)
       else
-        $shreduler.shredule(Ruck::Shred.new { |shred| loop { block.call(shred) } })
+        shred = Shred.new do |shred|
+          loop do
+            block.call(shred)
+            break if shred.finished?
+          end
+        end
+        $shreduler.shredule(shred)
       end
     end
     

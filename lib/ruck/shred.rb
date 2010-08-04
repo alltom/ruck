@@ -12,7 +12,8 @@ module Ruck
   class CallccShred
     @@current_shreds = []
     
-    def self.current_shred
+    # the currently executing shred
+    def self.current
       @@current_shreds.last
     end
     
@@ -69,7 +70,7 @@ module Ruck
   class FiberShred
     @@current_shreds = []
     
-    def self.current_shred
+    def self.current
       @@current_shreds.last
     end
     

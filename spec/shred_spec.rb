@@ -87,17 +87,18 @@ describe Shred do
   end
   
   context "when calling a shred from a shred" do
-    it "should update Shred.current_shred appropriately when the inner shred returns" do
+    it "should update Shred.current appropriately when the inner shred returns" do
       @shred1 = Shred.new do
-        Shred.current_shred.should == @shred1
+        Shred.current.should == @shred1
         @shred2.call
-        Shred.current_shred.should == @shred1
+        Shred.current.should == @shred1
       end
       @shred2 = Shred.new do
-        Shred.current_shred.should == @shred2
+        Shred.current.should == @shred2
         $shred2_ran = true
       end
       
+      $shred2_ran = false
       @shred1.call
       $shred2_ran.should be_true
     end
