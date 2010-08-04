@@ -11,11 +11,11 @@ This is accomplished using Shred, Clock, and Shreduler:
 
 Here's an example of how to use Shred:
 
-    shred = Ruck::Shred.new do |shred|
+    shred = Ruck::Shred.new do
       puts "A"
-      shred.pause
+      Ruck::Shred.current.pause
       puts "B"
-      shred.pause
+      Ruck::Shred.current.pause
       puts "C"
     end
     
@@ -50,19 +50,19 @@ Here's how these two are combined with Shreduler:
 
     @shreduler = Ruck::Shreduler.new
     
-    @shreduler.shredule(Ruck::Shred.new do |shred|
+    @shreduler.shredule(Ruck::Shred.new do
       %w{ A B C D E }.each do |letter|
         puts "#{letter}"
-        @shreduler.shredule(shred, @shreduler.now + 1)
-        shred.pause
+        @shreduler.shredule(Ruck::Shred.current, @shreduler.now + 1)
+        Ruck::Shred.current.pause
       end
     end)
     
-    @shreduler.shredule(Ruck::Shred.new do |shred|
+    @shreduler.shredule(Ruck::Shred.new do
       %w{ 1 2 3 4 5 }.each do |number|
         puts "#{number}"
-        @shreduler.shredule(shred, @shreduler.now + 1)
-        shred.pause
+        @shreduler.shredule(Ruck::Shred.current, @shreduler.now + 1)
+        Ruck::Shred.current.pause
       end
     end)
     
@@ -89,17 +89,17 @@ concisely:
     @shreduler = Ruck::Shreduler.new
     @shreduler.make_convenient
 
-    spork do |shred|
+    spork do
       %w{ A B C D E }.each do |letter|
         puts "#{letter}"
-        shred.yield(1)
+        Ruck::Shred.yield(1)
       end
     end
 
     spork do |shred|
       %w{ 1 2 3 4 5 }.each do |number|
         puts "#{number}"
-        shred.yield(1)
+        Ruck::Shred.yield(1)
       end
     end
 
