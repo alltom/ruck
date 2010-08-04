@@ -148,7 +148,7 @@ describe Shreduler do
           if $ran == 3
             Shred.current.kill
           else
-            Shred.current.yield(0)
+            Shred.yield(1)
           end
         end
         
@@ -166,6 +166,34 @@ describe Shreduler do
         @shreduler.run
         $ran.should == 3
         @shreduler.now.should == 2
+      end
+    end
+    
+    context "when waiting on events" do
+      it "should let you wait with Shred.wait_on" do
+        $ran = false
+        spork do
+          Shred.wait_on(:booger)
+          $ran = true
+        end
+        @shreduler.run
+        $ran.should be_false
+        @shreduler.raise_all(:booger)
+        @shreduler.run
+        $ran.should be_true
+      end
+      
+      it "should let you raise an event with raise_event" do
+        $ran = false
+        spork do
+          Shred.wait_on(:booger)
+          $ran = true
+        end
+        @shreduler.run
+        $ran.should be_false
+        raise_event(:booger)
+        @shreduler.run
+        $ran.should be_true
       end
     end
   end

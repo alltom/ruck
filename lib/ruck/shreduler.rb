@@ -70,7 +70,11 @@ module Ruck
     def make_convenient
       $shreduler = self
       
-      Shred.module_eval { include ShredConvenienceMethods }
+      Shred.module_eval do
+        class << self
+          include ShredConvenienceMethods
+        end
+      end
       Object.module_eval { include ObjectConvenienceMethods }
     end
     
@@ -90,15 +94,15 @@ module Ruck
     # yields the given amount of time on the global Shreduler, using the
     # provided Clock if given
     def yield(dt, clock = nil)
-      $shreduler.shredule(self, $shreduler.now + dt, clock)
-      pause
+      $shreduler.shredule(Shred.current, $shreduler.now + dt, clock)
+      Shred.current.pause
     end
     
     # sleeps, waiting on the given event on the default EventClock of
     # the global Shreduler
     def wait_on(event)
-      $shreduler.shredule(self, event, $shreduler.event_clock)
-      pause
+      $shreduler.shredule(Shred.current, event, $shreduler.event_clock)
+      Shred.current.pause
     end
   end
   
@@ -117,7 +121,7 @@ module Ruck
           loop do
             block.call
             break if Shred.current.finished?
-            Shred.current.yield(delay)
+            Shred.yield(delay)
           end
         end
         $shreduler.shredule(shred)
