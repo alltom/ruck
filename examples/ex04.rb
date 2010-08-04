@@ -16,17 +16,17 @@ end
 @shreduler = RealTimeShreduler.new
 @shreduler.make_convenient
 
-spork do |shred|
+spork do
   %w{ A B C D E }.each do |letter|
     puts "#{letter}"
-    shred.yield(1)
+    Shred.yield(1)
   end
 end
 
-spork do |shred|
+spork do
   %w{ 1 2 3 4 5 }.each do |number|
     puts "#{number}"
-    shred.yield(1)
+    Shred.yield(1)
   end
 end
 

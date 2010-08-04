@@ -13,21 +13,21 @@ end
 @shreduler = RealTimeShreduler.new
 @shreduler.make_convenient
 
-spork do |shred|
+spork do
   loop do
-    shred.wait_on(:gogogo)
+    Shred.wait_on(:gogogo)
     puts "YEE HAW!"
     puts
   end
 end
 
-spork do |shred|
+spork do
   loop do
-    shred.yield(1)
+    Shred.yield(1)
     puts "not yet"
-    shred.yield(1)
+    Shred.yield(1)
     puts "still not yet"
-    shred.yield(1)
+    Shred.yield(1)
     puts "okay now!"
     raise_event(:gogogo)
   end

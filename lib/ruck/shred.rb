@@ -39,7 +39,7 @@ module Ruck
         
         begin
           @@current_shreds << self
-          @proc.call *args
+          @proc.call
         ensure
           @@current_shreds.pop
         end

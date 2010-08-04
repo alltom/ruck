@@ -21,6 +21,8 @@ require "gosu"
 require "chipmunk"
 require "ruck"
 
+include Ruck
+
 SCREEN_WIDTH = 640
 SCREEN_HEIGHT = 480
 
@@ -131,7 +133,7 @@ class Star
     @frame = 0
     @anim_shred = spork_loop do
       @frame = (@frame + 1) % @animation.size
-      @anim_shred.yield(0.1)
+      Shred.yield(0.1)
     end
   end
 
@@ -171,7 +173,7 @@ class GameWindow < Gosu::Window
       physics_update
     end
     
-    spork_loop do |add_stars_shred|
+    spork_loop do
       if @stars.length < 25
         body = CP::Body.new(0.0001, 0.0001)
         shape = CP::Shape::Circle.new(body, 25/2, CP::Vec2.new(0.0, 0.0))
@@ -183,11 +185,11 @@ class GameWindow < Gosu::Window
         @stars.push(Star.new(@star_animation_frames, shape))
       end
       
-      add_stars_shred.yield(rand * 1)
+      Shred.yield(rand * 1)
     end
     
-    spork_loop do |draw_shred|
-      draw_shred.wait_on(:frame)
+    spork_loop do
+      Shred.wait_on(:frame)
       
       @background_image.draw(0, 0, ZOrder::Background)
       @ship.draw
@@ -198,8 +200,8 @@ class GameWindow < Gosu::Window
     
     @framerate = 0.0
     @frames = 0
-    spork_loop do |framerate_shred|
-      framerate_shred.wait_on(:frame)
+    spork_loop do
+      Shred.wait_on(:frame)
       @frames += 1
       @framerate = @frames / @shreduler.actual_now
     end

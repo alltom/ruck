@@ -5,17 +5,17 @@ include Ruck
 
 shred1 = Shred.new do |shred|
   puts "A"
-  shred.pause
+  Shred.current.pause
   puts "B"
-  shred.pause
+  Shred.current.pause
   puts "C"
 end
 
 shred2 = Shred.new do |shred|
   puts "1"
-  shred.pause
+  Shred.current.pause
   puts "2"
-  shred.pause
+  Shred.current.pause
   puts "3"
 end
 

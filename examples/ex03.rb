@@ -34,25 +34,25 @@ end
 
 
 # warped bass drum player
-@shreduler.shredule(Shred.new do |shred|
+@shreduler.shredule(Shred.new do
   loop do
     @midi.note_on(BassDrum1, 10, 127)
     @midi.note_on(BassDrum1, 10, 127)
     
-    @shreduler.shredule(shred, @warped_clock.now + 1, @warped_clock)
-    shred.pause
+    @shreduler.shredule(Shred.current, @warped_clock.now + 1, @warped_clock)
+    Shred.current.pause
   end
 end, nil, @warped_clock)
 
 
 # normal crash cymbal player
-@shreduler.shredule(Shred.new do |shred|
+@shreduler.shredule(Shred.new do
   loop do
     @midi.note_on(CrashCymbal1, 10, 127)
     @midi.note_on(CrashCymbal1, 10, 127)
     
-    @shreduler.shredule(shred, @shreduler.now + 1)
-    shred.pause
+    @shreduler.shredule(Shred.current, @shreduler.now + 1)
+    Shred.current.pause
   end
 end)
 
@@ -66,8 +66,8 @@ end)
     @warped_clock.relative_rate = bpm / 60.0
     puts "#{bpm} bpm"
     
-    @shreduler.shredule(shred, @shreduler.now + 0.1)
-    shred.pause
+    @shreduler.shredule(Shred.current, @shreduler.now + 0.1)
+    Shred.current.pause
   end
 end)
 
