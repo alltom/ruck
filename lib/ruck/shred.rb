@@ -24,6 +24,8 @@ module Ruck
     # pause execution by saving this execution point and returning
     # to the point where go was called
     def pause
+      @@current_shreds.pop
+      
       callcc do |cont|
         @proc = cont
         @caller.call
@@ -37,12 +39,9 @@ module Ruck
       callcc do |cont|
         @caller = cont
         
-        begin
-          @@current_shreds << self
-          @proc.call
-        ensure
-          @@current_shreds.pop
-        end
+        @@current_shreds << self
+        @proc.call
+        @@current_shreds.pop
         
         # if we made it here, we're done
         @proc = nil
