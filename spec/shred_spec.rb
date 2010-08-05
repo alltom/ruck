@@ -33,6 +33,20 @@ describe Shred do
       @shred.call
     end
     
+    it "should not let you pause the wrong shred" do
+      @shred1 = Shred.new do
+        @shred2.call
+      end
+      @shred2 = Shred.new do
+        @shred1.pause
+        $shred2_ran = true
+      end
+      
+      $shred2_ran = false
+      @shred1.call
+      $shred2_ran.should be_true
+    end
+    
     it "should let you use [] instead of #call" do
       $ran = false
       @shred = Shred.new { $ran = true }
