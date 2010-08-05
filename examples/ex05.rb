@@ -13,12 +13,9 @@ end
 @shreduler = RealTimeShreduler.new
 @shreduler.make_convenient
 
-spork do
-  loop do
-    Shred.wait_on(:gogogo)
-    puts "YEE HAW!"
-    puts
-  end
+spork_loop(:gogogo) do
+  puts "YEE HAW!"
+  puts
 end
 
 spork do

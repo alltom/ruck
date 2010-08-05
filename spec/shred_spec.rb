@@ -12,16 +12,6 @@ describe Shred do
       $ran.should == true
     end
     
-    it "should pass the arguments to the shred" do
-      $ran = false
-      @shred = Shred.new do |x|
-        x.should == 42
-        $ran = true
-      end
-      @shred.call(42)
-      $ran.should be_true
-    end
-    
     it "should resume execution" do
       $ran = 0
       

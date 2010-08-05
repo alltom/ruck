@@ -156,7 +156,7 @@ describe Shreduler do
         $ran.should == 3
       end
       
-      it "should let you specify an amount to automatically yield after each run" do
+      it "should let you specify an amount to automatically yield after before run" do
         $ran = 0
         spork_loop(1) do
           $ran += 1
@@ -165,7 +165,7 @@ describe Shreduler do
         
         @shreduler.run
         $ran.should == 3
-        @shreduler.now.should == 2
+        @shreduler.now.should == 3
       end
     end
     

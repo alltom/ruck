@@ -113,27 +113,24 @@ module Ruck
     end
     
     # creates a new Shred with the given block on the global Shreduler,
-    # automatically surrounded by loop { }. If the delay parameter is
-    # given, a shred.yield(delay) is inserted after the call to your block.
-    def spork_loop(delay = nil, &block)
-      if delay
-        shred = Shred.new do
-          loop do
-            block.call
-            break if Shred.current.finished?
-            Shred.yield(delay)
+    # automatically surrounded by loop { }. If the delay_or_event parameter
+    # is given, a Shred.yield(delay) or Shred.wait_on(event) is inserted
+    # before the call to your block.
+    def spork_loop(delay_or_event = nil, &block)
+      shred = Shred.new do
+        while !Shred.current.finished?
+          if delay_or_event
+            if delay_or_event.is_a?(Numeric)
+              Shred.yield(delay_or_event)
+            else
+              Shred.wait_on(delay_or_event)
+            end
           end
+          
+          block.call
         end
-        $shreduler.shredule(shred)
-      else
-        shred = Shred.new do
-          loop do
-            block.call
-            break if Shred.current.finished?
-          end
-        end
-        $shreduler.shredule(shred)
       end
+      $shreduler.shredule(shred)
     end
     
     # raises an event on the default EventClock of the global Shreduler.
