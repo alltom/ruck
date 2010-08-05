@@ -80,13 +80,17 @@ module Ruck
     end
     
     def pause
+      return unless Shred.current == self
+      
+      @@current_shreds.pop
+      
       Fiber.yield
     end
     
     def call(*args)
       return unless @fiber
       @@current_shreds << self
-      @fiber.resume *args
+      @fiber.resume
     rescue FiberError
       @fiber = nil
     ensure
