@@ -12,7 +12,7 @@ module Ruck
   class CallccShred
     # I don't mean to actually expose @proc. I noticed that Ruby 1.8's
     # garbage collection cycles become much longer when @proc (a
-    # Continuation) is returned from a method on this class, but not
+    # Continuation) is returned from a custom method, but not
     # if returned from an attr_reader. I use attr_reader and alias it
     # to running? to avoid this cost.
     attr_reader :proc
