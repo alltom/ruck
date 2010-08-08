@@ -143,13 +143,4 @@ then saving to disk)</dd>
 <dd>maps to samples in an audio stream, providing a
 simple unit generator framework for reading and writing WAV
 files with effects</dd>
-
-<dt>ruck-glapp</dt>
-<dd>maps to real-time, but embedded in an OpenGL
-application</dd>
 </dl>
-
-VERY IMPORTANT NOTE! ruck was recently rewritten and these
-other projects have not yet been updated! So I highly recommend
-using the v0.2 gems for them all as your source of documentation
-unless you're using ruck by itself!
