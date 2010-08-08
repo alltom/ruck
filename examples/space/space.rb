@@ -243,6 +243,12 @@ class GameWindow < Gosu::Window
     # prevent stars from bumping into one another
     @space.add_collision_func(:star, :star, &nil)
   end
+  
+  def update
+    GC.enable
+    GC.start
+    GC.disable
+  end
 
   def draw
     @shreduler.catch_up
