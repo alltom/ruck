@@ -73,23 +73,26 @@ describe Shred do
     end
   end
   
-  context "when checking finished?" do
-    it "should be false just after creation" do
+  context "when checking finished? and running?" do
+    it "finished? should be false just after creation" do
       @shred = Shred.new { }
       @shred.finished?.should be_false
+      @shred.running?.should be_true
     end
     
-    it "should be true just after executing the shred for the last time" do
+    it "finished? should be true just after executing the shred for the last time" do
       pending "not yet supported in Ruby 1.9 because Fiber#alive? is missing"
       @shred = Shred.new { }
       @shred.call
       @shred.finished?.should be_true
+      @shred.running?.should be_false
     end
     
-    it "should be true just after killing the shred" do
+    it "finished? should be true just after killing the shred" do
       @shred = Shred.new { }
       @shred.kill
       @shred.finished?.should be_true
+      @shred.running?.should be_false
     end
   end
   

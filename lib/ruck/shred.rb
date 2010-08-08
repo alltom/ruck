@@ -10,6 +10,14 @@ module Ruck
   # almost guarantee that strange things will happen.
   
   class CallccShred
+    # I don't mean to actually expose @proc. I noticed that Ruby 1.8's
+    # garbage collection cycles become much longer when @proc (a
+    # Continuation) is returned from a method on this class, but not
+    # if returned from an attr_reader. I use attr_reader and alias it
+    # to running? to avoid this cost.
+    attr_reader :proc
+    alias running? proc
+    
     @@current_shreds = []
     
     # the currently executing shred
@@ -58,7 +66,7 @@ module Ruck
     
     # returns true if calling this Shred again will have no effect
     def finished?
-      @proc.nil?
+      !running?
     end
     
     # makes it so calling this Shred in the future will have no effect
@@ -103,6 +111,10 @@ module Ruck
     
     def finished?
       @fiber.nil?
+    end
+    
+    def running?
+      !finished?
     end
     
     def kill

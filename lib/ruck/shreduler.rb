@@ -118,7 +118,7 @@ module Ruck
     # before the call to your block.
     def spork_loop(delay_or_event = nil, &block)
       shred = Shred.new do
-        while !Shred.current.finished?
+        while Shred.current.running?
           if delay_or_event
             if delay_or_event.is_a?(Numeric)
               Shred.yield(delay_or_event)
