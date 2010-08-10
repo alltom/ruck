@@ -39,9 +39,7 @@ module Ruck
       return nil unless shred
       
       fast_forward(relative_time) if relative_time > 0
-      
-      shred.call
-      shred
+      invoke_shred(shred)
     end
     
     # runs until all Shreds have died, or are all waiting on events
@@ -80,6 +78,11 @@ module Ruck
     
     protected
       
+      def invoke_shred(shred)
+        shred.call
+        shred
+      end
+      
       # if you override this method, you should probably call super
       def fast_forward(dt)
         @clock.fast_forward(dt)
@@ -94,7 +97,8 @@ module Ruck
     # yields the given amount of time on the global Shreduler, using the
     # provided Clock if given
     def yield(dt, clock = nil)
-      $shreduler.shredule(Shred.current, $shreduler.now + dt, clock)
+      clock ||= $shreduler.clock
+      $shreduler.shredule(Shred.current, clock.now + dt, clock)
       Shred.current.pause
     end
     
