@@ -124,12 +124,12 @@ module Ruck
     # automatically surrounded by loop { }. If the delay_or_event parameter
     # is given, a Shred.yield(delay) or Shred.wait_on(event) is inserted
     # before the call to your block.
-    def spork_loop(delay_or_event = nil, &block)
+    def spork_loop(delay_or_event = nil, clock = nil, &block)
       shred = Shred.new do
         while Shred.current.running?
           if delay_or_event
             if delay_or_event.is_a?(Numeric)
-              Shred.yield(delay_or_event)
+              Shred.yield(delay_or_event, clock)
             else
               Shred.wait_on(delay_or_event)
             end
