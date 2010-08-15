@@ -79,7 +79,11 @@ module Ruck
     protected
       
       def invoke_shred(shred)
-        shred.call
+        begin
+          shred.call
+        rescue Exception => e
+          puts e.inspect
+        end
         shred
       end
       
