@@ -96,7 +96,7 @@ concisely:
       end
     end
 
-    spork do |shred|
+    spork do
       %w{ 1 2 3 4 5 }.each do |number|
         puts "#{number}"
         Ruck::Shred.yield(1)
