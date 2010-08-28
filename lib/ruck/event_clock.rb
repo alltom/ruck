@@ -35,5 +35,10 @@ module Ruck
       @raised += @waiting[event]
       @waiting[event].clear
     end
+    
+    def clear
+      @waiting.clear
+      @raised.clear
+    end
   end
 end

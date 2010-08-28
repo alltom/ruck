@@ -28,6 +28,11 @@ module Ruck
       @clock.unschedule(shred)
     end
     
+    # unshredules every Shred
+    def clear
+      @clock.clear
+    end
+    
     # wakes up all Shreds waiting on the given event
     def raise_all(event)
       event_clock.raise_all(event)

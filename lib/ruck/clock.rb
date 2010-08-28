@@ -73,6 +73,12 @@ module Ruck
       end
     end
     
+    # dequeues every occurrence from this clock and its children
+    def clear
+      @occurrences = PriorityQueue.new
+      @children.each { |child| child.clear }
+    end
+    
     # returns [obj, relative_time], where relative_time is the offset from
     # now in parent's time units
     def next
