@@ -33,12 +33,18 @@ module Ruck
   class Clock
     attr_reader :now # current time in this clock's units
     attr_accessor :relative_rate # rate relative to parent clock
+    attr_accessor :parent
     
     def initialize(relative_rate = 1.0)
       @relative_rate = relative_rate
       @now = 0
       @children = []
       @occurrences = PriorityQueue.new
+    end
+    
+    def relative_rate=(new_rate)
+      @relative_rate = new_rate
+      parent.schedule([:clock, self], unscale_time(@occurrences.min_priority))
     end
     
     # fast-forward this clock and all children clocks by the given time delta
@@ -51,21 +57,32 @@ module Ruck
     # adds the given clock as a child of this one. a clock should only be
     # the child of one other clock, please.
     def add_child_clock(clock)
-      @children << clock
+      @children << clock unless @children.include? clock
+      clock.parent = self
       clock
     end
     
     # schedules an occurrence at the given time with the given object,
     # defaulting to the current time
     def schedule(obj, time = nil)
-      @occurrences[obj] = time || now
+      time ||= now
+      @occurrences[obj] = time
+      parent.schedule([:clock, self], unscale_time(time)) if parent && @occurrences.min_key == obj
     end
     
     # dequeues the earliest occurrence from this clock or any child clocks.
     # returns nil if it wasn't there, or its relative_time otherwise
     def unschedule(obj)
-      if @occurrences[obj]
+      if @occurrences.has_key? obj
+        last_priority = @occurrences.min_priority
         obj, time = @occurrences.delete obj
+        if parent && @occurrences.min_priority != last_priority
+          if @occurrences.min_priority
+            parent.schedule([:clock, self], unscale_time(@occurrences.min_priority))
+          else
+            parent.unschedule([:clock, self])
+          end
+        end
         unscale_time(time)
       else
         relative_time = @children.first_non_nil { |clock| clock.unschedule(obj) }
@@ -100,22 +117,15 @@ module Ruck
       
       # returns [clock, [obj, relative_time]]
       def next_with_clock
-        min = nil
+        return nil if @occurrences.length == 0
         
-        if @occurrences.length > 0
-          obj, time = @occurrences.min
-          min = [self, [obj, unscale_time(time)]]
+        obj, time = @occurrences.min
+        if Array === obj && obj[0] == :clock
+          sub_obj, relative_time = obj[1].next
+          [obj[1], [sub_obj, unscale_relative_time(relative_time)]]
+        else
+          [self, [obj, unscale_time(time)]]
         end
-        
-        # earliest occurrence of each child, converting to absolute time
-        @children.each do |child_clock|
-          obj, relative_time = child_clock.next
-          next unless obj
-          relative_time = unscale_relative_time(relative_time)
-          min = [child_clock, [obj, relative_time]] if min.nil? || relative_time < min[1][1]
-        end
-        
-        min
       end
       
       # convert an absolute time in this clock's units to an offset from

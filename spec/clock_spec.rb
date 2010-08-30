@@ -108,6 +108,12 @@ describe Clock do
       @clocks << @clocks[2].add_child_clock(Clock.new(2))
     end
     
+    it "should have set each clock's parent" do
+      @clocks[1].parent.should == @clocks[0]
+      @clocks[2].parent.should == @clocks[0]
+      @clocks[3].parent.should == @clocks[2]
+    end
+    
     context "when fast-forwarding" do
       it "fast-forwards children clocks" do
         @clock.fast_forward(1)
@@ -143,9 +149,26 @@ describe Clock do
         @clock.fast_forward(1)
         @clock.next.should == [@occurrence, 1]
       end
+      
+      context "when relative rates change" do
+        it "should still work" do
+          @occurrences = [MockOccurrenceObj.new, MockOccurrenceObj.new]
+          @clocks[0].schedule(@occurrences[0], 3)
+          @clocks[1].schedule(@occurrences[1], 4)
+          @clock.next.should == [@occurrences[0], 3]
+          @clocks[1].relative_rate = 2
+          @clock.next.should == [@occurrences[1], 2]
+        end
+      end
     end
     
     context "when dequeuing the next occurrence" do
+      context "with no occurrences" do
+        it "should be nil" do
+          @clock.unschedule_next.should == nil
+        end
+      end
+      
       it "should work when the occurrence is on the parent clock" do
         @occurrence = MockOccurrenceObj.new
         @clocks[0].schedule(@occurrence, 4)
@@ -168,6 +191,34 @@ describe Clock do
         @occurrence = MockOccurrenceObj.new
         @clocks[3].schedule(@occurrence, 4)
         @clock.unschedule_next.should == [@occurrence, 1]
+      end
+      
+      it "should work with a bunch of occurrences" do
+        num_child_clocks = 10
+        num_events_per_clock = 10
+        
+        events = PriorityQueue.new
+
+        main_clock = Clock.new
+        child_clocks = (1..num_child_clocks).map { Clock.new }
+        child_clocks.each_with_index do |clock, i|
+          main_clock.add_child_clock clock
+
+          (1..num_events_per_clock).each do |j|
+            t = rand
+            clock.schedule([i, j], t)
+            events[[i, j]] = t
+          end
+        end
+
+        (1..num_child_clocks * num_events_per_clock).each do
+          n, t = main_clock.unschedule_next
+          n.should_not be_nil
+          n.should == events.min_key
+          events.delete_min
+        end
+
+        main_clock.unschedule_next.should be_nil
       end
     end
   end
