@@ -5,9 +5,9 @@ precisely time the execution of events.
 
 This is accomplished using Shred, Clock, and Shreduler:
 
-- Shred: a resumable Proc
-- Clock: manages occurrences on a timeline
-- Shreduler: executes shreds on time
+- Shred: a resumable Proc (a Fiber wrapper on 1.9)
+- Clock: manages objects on a timeline
+- Shreduler: executes Shreds on time by managing them with a Clock
 
 Here's an example of how to use Shred:
 
