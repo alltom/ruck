@@ -17,9 +17,17 @@ begin
       by overriding "sim_to" in the Shreduler class.
     EOF
     gem.has_rdoc = false
+    gem.add_dependency "PriorityQueue", ">= 0"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new
 rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: gem install jeweler"
+end
+
+if require "spec/rake/spectask"
+  desc "Run all specs"
+  Spec::Rake::SpecTask.new("spec") do |t|
+    t.spec_files = FileList["spec/**/*.rb"]
+  end
 end
