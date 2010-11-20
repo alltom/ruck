@@ -88,6 +88,7 @@ module Ruck
           shred.call
         rescue Exception => e
           puts e.inspect
+          puts e.backtrace
         end
         shred
       end
