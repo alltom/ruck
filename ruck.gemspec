@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{ruck}
-  s.version = "0.3.0"
+  s.version = "0.3.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Tom Lieber"]
-  s.date = %q{2010-08-15}
+  s.date = %q{2010-11-20}
   s.description = %q{      Ruck uses continuations and a simple scheduler to ensure "shreds"
       (Ruck threads) are woken at precisely the right time according
       to its virtual clock. Schedulers can map virtual time to samples
@@ -19,11 +19,13 @@ Gem::Specification.new do |s|
   s.email = %q{tom@alltom.com}
   s.extra_rdoc_files = [
     "LICENSE",
+     "README.developer.markdown",
      "README.markdown"
   ]
   s.files = [
     ".gitignore",
      "LICENSE",
+     "README.developer.markdown",
      "README.markdown",
      "Rakefile",
      "VERSION",
